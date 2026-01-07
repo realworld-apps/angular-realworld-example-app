@@ -42,6 +42,7 @@ export default class HomeComponent implements OnInit {
           } else {
             this.setListTo('all');
           }
+          this.setListTo('trending');
         }),
         takeUntilDestroyed(this.destroyRef),
       )

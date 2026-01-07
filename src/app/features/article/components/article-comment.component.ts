@@ -10,32 +10,57 @@ import { AsyncPipe, DatePipe } from '@angular/common';
   selector: 'app-article-comment',
   template: `
     @if (comment) {
-      <div class="card">
-        <div class="card-block">
-          <p class="card-text">
-            {{ comment.body }}
-          </p>
+      @if (comment.status === 'REMOVED') {
+        <div class="card">
+          <div class="card-block">
+            <p class="card-text">This comment has been deleted.</p>
+          </div>
         </div>
-        <div class="card-footer">
-          <a class="comment-author" [routerLink]="['/profile', comment.author.username]">
-            <img [src]="comment.author.image" class="comment-author-img" />
-          </a>
-          &nbsp;
-          <a class="comment-author" [routerLink]="['/profile', comment.author.username]">
-            {{ comment.author.username }}
-          </a>
-          <span class="date-posted">
-            {{ comment.createdAt | date: 'longDate' }}
-          </span>
-          @if (canModify$ | async) {
-            <span class="mod-options">
-              <i class="ion-trash-a" (click)="delete.emit(true)"></i>
+      } @else {
+        <div class="card">
+          <div class="card-block">
+            <p class="card-text">
+              {{ comment.body }}
+            </p>
+          </div>
+          <div class="card-footer">
+            <a class="comment-author" [routerLink]="['/profile', comment.author.username]">
+              <img [src]="comment.author.image" class="comment-author-img" />
+            </a>
+            &nbsp;
+            <a class="comment-author" [routerLink]="['/profile', comment.author.username]">
+              {{ comment.author.username }}
+            </a>
+            <span class="date-posted">
+              {{ comment.createdAt | date: 'longDate' }}
             </span>
-          }
+            @if (canModify$ | async) {
+              <span class="mod-options">
+                <i class="ion-trash-a" (click)="delete.emit(true)"></i>
+              </span>
+            }
+          </div>
         </div>
-      </div>
+      }
     }
   `,
+  styles: [
+    `
+      .comment {
+        padding: 12px;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .deleted {
+        font-style: italic;
+        color: #888;
+      }
+
+      .deleted-text {
+        margin: 0;
+      }
+    `,
+  ],
   imports: [RouterLink, DatePipe, AsyncPipe],
 })
 export class ArticleCommentComponent {

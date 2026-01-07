@@ -125,7 +125,7 @@ export default class ArticleComponent implements OnInit {
 
   deleteComment(comment: Comment): void {
     this.commentsService
-      .delete(comment.id, this.article.slug)
+      .softDelete(comment.id, this.article.slug)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.comments = this.comments.filter(item => item !== comment);
