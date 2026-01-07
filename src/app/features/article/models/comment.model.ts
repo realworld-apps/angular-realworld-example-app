@@ -4,5 +4,6 @@ export interface Comment {
   id: string;
   body: string;
   createdAt: string;
+  status: string;
   author: Profile;
 }

@@ -23,4 +23,8 @@ export class CommentsService {
   delete(commentId: string, slug: string): Observable<void> {
     return this.http.delete<void>(`/articles/${slug}/comments/${commentId}`);
   }
+
+  softDelete(commentId: string, slug: string): Observable<void> {
+    return this.http.patch<void>(`/articles/${slug}/comments/${commentId}/remove`, {});
+  }
 }
