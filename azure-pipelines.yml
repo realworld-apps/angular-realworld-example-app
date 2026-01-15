@@ -1,0 +1,35 @@
+trigger:
+- main
+
+resources:
+- repo: self
+
+variables:
+  # ชื่อ Image ที่จะตั้ง (แก้เป็น username ของคุณ)
+  imageRepository: 'mccoycommy/angular-realworld' 
+  containerRegistry: 'docker-hub-connection' # ชื่อ connection ที่ตั้งใน Step 3.1
+  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
+  tag: '$(Build.BuildId)'
+
+  # VM Image ที่จะใช้รัน Pipeline (Ubuntu)
+  vmImageName: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build and push stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(containerRegistry)
+        tags: |
+          $(tag)
+          latest
