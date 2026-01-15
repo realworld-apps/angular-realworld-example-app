@@ -7,7 +7,7 @@ resources:
 variables:
   # ชื่อ Image ที่จะตั้ง (แก้เป็น username ของคุณ)
   imageRepository: 'mccoycommy/angular-realworld' 
-  containerRegistry: 'docker-hub-connection' # ชื่อ connection ที่ตั้งใน Step 3.1
+  containerRegistry: 'docker-hub-connection-v2' # ชื่อ connection ที่ตั้งใน Step 3.1
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
   tag: '$(Build.BuildId)'
 
