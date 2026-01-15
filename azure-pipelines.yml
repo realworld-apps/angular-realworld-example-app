@@ -21,7 +21,8 @@ stages:
   - job: Build
     displayName: Build
     pool:
-      vmImage: $(vmImageName)
+      name: 'MyMacAgent' # ต้องตรงกับชื่อ Pool ที่เราสร้าง
+      # vmImage: $(vmImageName)
     steps:
     - task: Docker@2
       displayName: Build and push an image to container registry
