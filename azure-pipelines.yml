@@ -34,3 +34,14 @@ stages:
         tags: |
           $(tag)
           latest
+
+    # Check whether there is trivy on OS or not.
+    - script: |
+        if ! command -v trivy &> /dev/null; then
+          brew install trivy
+        fi
+
+    # 2. สแกน Image
+    - script: |
+        trivy image --exit-code 0 --severity HIGH,CRITICAL $(imageRepository):$(tag)
+      displayName: 'Scan Image with Trivy'
