@@ -45,3 +45,20 @@ stages:
     - script: |
         trivy image --exit-code 0 --severity HIGH,CRITICAL $(imageRepository):$(tag)
       displayName: 'Scan Image with Trivy'
+
+- stage: Deploy
+  displayName: Deploy to Production
+  dependsOn: Build    # ต้องรอ Build เสร็จก่อน
+  condition: succeeded()
+  jobs:
+  - deployment: DeployWeb
+    displayName: Deploy Web App
+    environment: 'Production' # ชื่อต้องตรงกับที่เราสร้าง
+    pool:
+      name: 'MyMacAgent'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - script: echo "🚀 Deploying to Production Server..."
+            displayName: 'Simulate Deployment'
