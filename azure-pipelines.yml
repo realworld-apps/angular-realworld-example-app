@@ -24,6 +24,20 @@ stages:
       name: 'MyMacAgent' # ต้องตรงกับชื่อ Pool ที่เราสร้าง
       # vmImage: $(vmImageName)
     steps:
+    # Prepare Analysis
+    - task: SonarQubePrepare@8
+      displayName: 'Prepare SonarQube Analysis'
+      inputs:
+        SonarQube: 'sonarqube-local' # ชื่อ Service Connection
+        scannerMode: 'CLI' # ใช้ CLI เพราะเราไม่ได้ build ด้วย MSBuild/Maven
+        configMode: 'manual'
+        cliProjectKey: 'Angular-Realworld' # Project Key ที่ตั้งไว้
+        cliProjectName: 'Angular-Realword'
+        cliSources: '.' # Scan ทั้ง Folder # sonar.exclusion บอกให้รู้
+        extraProperties: |
+          sonar.exclusion=**/node_modules/**,**/dist/**,**/*.spec.ts
+          sonar.typescript.lcov.reportPaths=coverage/lcov.info
+
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
@@ -45,6 +59,21 @@ stages:
     - script: |
         trivy image --exit-code 0 --severity HIGH,CRITICAL $(imageRepository):$(tag)
       displayName: 'Scan Image with Trivy'
+
+    # 3. Run Analysis (วางต่อจาก Docker Build หรือ Trivy)
+    # จริงๆ ควรวางหลัง Build Code เสร็จ แต่ก่อน Build Docker 
+    # แต่ใน Lab นี้เรา Build ใน Docker ทำให้ Source Code ข้างนอกไม่มี node_modules
+    # SonarQube สแกน Code ดิบๆ ได้ครับ วางตรงนี้ได้เลย
+    - task: SonarQubeAnalyze@8
+      displayName: 'Run SonarQube Analysis'
+      inputs:
+        jdkversion: 'JAVA_HOME_17_X64' # Sonar Scanner ต้องการ Java 17
+
+# 4. Publish Result (ส่งผลกลับ Azure DevOps)
+    - task: SonarQubePublish@8
+      displayName: 'Publish Quality Gate Result'
+      inputs:
+        pollingTimeoutSec: '300'
 
 - stage: Deploy
   displayName: Deploy to Production
