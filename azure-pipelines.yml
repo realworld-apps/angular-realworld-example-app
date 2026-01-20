@@ -37,7 +37,8 @@ stages:
         extraProperties: |
           sonar.exclusion=**/node_modules/**,**/dist/**,**/*.spec.ts
           sonar.typescript.lcov.reportPaths=coverage/lcov.info
-
+          # เพิ่มบรรทัดนี้เพื่อแก้ปัญหา Branch Analysis
+          sonar.branch.name=
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
