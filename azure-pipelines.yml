@@ -25,20 +25,29 @@ stages:
       # vmImage: $(vmImageName)
     steps:
     # Prepare Analysis
-    - task: SonarQubePrepare@8
-      displayName: 'Prepare SonarQube Analysis'
-      inputs:
-        SonarQube: 'sonarqube-local' # ชื่อ Service Connection
-        scannerMode: 'CLI' # ใช้ CLI เพราะเราไม่ได้ build ด้วย MSBuild/Maven
-        configMode: 'manual'
-        cliProjectKey: 'Angular-Realworld' # Project Key ที่ตั้งไว้
-        cliProjectName: 'Angular-Realword'
-        cliSources: '.' # Scan ทั้ง Folder # sonar.exclusion บอกให้รู้
-        extraProperties: |
-          sonar.exclusion=**/node_modules/**,**/dist/**,**/*.spec.ts
-          sonar.typescript.lcov.reportPaths=coverage/lcov.info
+    # - task: SonarQubePrepare@8
+      #displayName: 'Prepare SonarQube Analysis'
+      #inputs:
+        #SonarQube: 'sonarqube-local' # ชื่อ Service Connection
+        #scannerMode: 'CLI' # ใช้ CLI เพราะเราไม่ได้ build ด้วย MSBuild/Maven
+        #configMode: 'manual'
+        #cliProjectKey: 'Angular-Realworld' # Project Key ที่ตั้งไว้
+        #cliProjectName: 'Angular-Realword'
+        #cliSources: '.' # Scan ทั้ง Folder # sonar.exclusion บอกให้รู้
+        #extraProperties: |
+          #sonar.exclusion=**/node_modules/**,**/dist/**,**/*.spec.ts
+          #sonar.typescript.lcov.reportPaths=coverage/lcov.info
           # เพิ่มบรรทัดนี้เพื่อแก้ปัญหา Branch Analysis
-          sonar.branch.name=
+          #sonar.branch.name=
+    # Run SonarQube Scanner (Manual Way)
+    - script: |
+        sonar-scanner \
+          -Dsonar.projectKey=Angular-Realworld \
+          -Dsonar.sources=. \
+          -Dsonar.host.url=http://localhost:9000 \
+          -Dsonar.login=sqa_269773f1d9ef5859bb7df3c7afa4c5f7bb7908a5 \
+          -Dsonar.exclusions=**/node_modules/**,**/dist/**
+      displayName: 'Run SonarQube Analysis (Manual)'
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
