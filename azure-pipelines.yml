@@ -70,6 +70,50 @@ stages:
         trivy image --exit-code 0 --severity HIGH,CRITICAL $(imageRepository):$(tag)
       displayName: 'Scan Image with Trivy' 
 
+- stage: DAST
+  displayName: 'Dynamic Security Testing'
+  dependsOn: Build
+  condition: succeeded()
+  jobs:
+    - job: ZapScan
+      displayName: 'OWASP ZAP Scan'
+      pool:
+        name: 'MyMacAgent'
+      steps:
+      # 1. Start App Container (เป้าซ้อมยิง)
+      # เราจะ Pull Image ที่เพิ่ง Build มา Run
+        - script: |
+            docker run -d --name target-app -p 8081:80 $(imageRepository):$(tag)
+            sleep 10 
+          displayName: 'Start Target App'
+          # sleep 10 รอให้ App ตื่นเต็มที่
+
+        # 2. Run ZAP Scan (Baseline Scan)
+        # ใช้ ZAP Docker ยิงไปที่ host.docker.internal:8081
+        - script: |
+            docker run --rm \
+            -v $(System.DefaultWorkingDirectory):/zap/wrk/:rw \
+            -t zaproxy/zap-stable zap-baseline.py \
+            -t http://host.docker.internal:8081 \
+            -r zap-report.html \
+            -I 
+          displayName: 'Run ZAP Baseline Scan'
+          continueOnError: true # ยอมให้ผ่านได้แม้จะเจอช่องโหว่ (เพื่อให้ได้ report)
+
+        # 3. Stop & Remove App
+        - script: |
+            docker rm -f target-app
+          displayName: 'Cleanup Target App'
+          condition: always() # ทำเสมอไม่ว่าจะ Scan ผ่านหรือไม่
+
+        # 4. Publish ZAP Report
+        - task: PublishBuildArtifacts@1
+          displayName: 'Pubish ZAP Report'
+          inputs:
+            PathtoPublish: '$(System.DefaultWorkingDirectory)/zap-report.html'
+            ArtifactName: 'ZapReport'
+            publishLocation: 'Container'
+
 - stage: Deploy
   displayName: Deploy to Production
   dependsOn: Build    # ต้องรอ Build เสร็จก่อน
