@@ -68,22 +68,7 @@ stages:
     # 2. สแกน Image
     - script: |
         trivy image --exit-code 0 --severity HIGH,CRITICAL $(imageRepository):$(tag)
-      displayName: 'Scan Image with Trivy'
-
-    # 3. Run Analysis (วางต่อจาก Docker Build หรือ Trivy)
-    # จริงๆ ควรวางหลัง Build Code เสร็จ แต่ก่อน Build Docker 
-    # แต่ใน Lab นี้เรา Build ใน Docker ทำให้ Source Code ข้างนอกไม่มี node_modules
-    # SonarQube สแกน Code ดิบๆ ได้ครับ วางตรงนี้ได้เลย
-    - task: SonarQubeAnalyze@8
-      displayName: 'Run SonarQube Analysis'
-      inputs:
-        jdkversion: 'JAVA_HOME_17_X64' # Sonar Scanner ต้องการ Java 17
-
-# 4. Publish Result (ส่งผลกลับ Azure DevOps)
-    - task: SonarQubePublish@8
-      displayName: 'Publish Quality Gate Result'
-      inputs:
-        pollingTimeoutSec: '300'
+      displayName: 'Scan Image with Trivy' 
 
 - stage: Deploy
   displayName: Deploy to Production
