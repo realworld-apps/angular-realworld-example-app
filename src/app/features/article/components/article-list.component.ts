@@ -1,9 +1,10 @@
-import { Component, DestroyRef, inject, Input } from '@angular/core';
+import { Component, DestroyRef, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { ArticlesService } from '../services/articles.service';
 import { ArticleListConfig } from '../models/article-list-config.model';
 import { Article } from '../models/article.model';
 import { ArticlePreviewComponent } from './article-preview.component';
 import { NgClass } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { LoadingState } from '../../../core/models/loading-state.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -18,13 +19,20 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
       @for (article of results; track article.slug) {
         <app-article-preview [article]="article" />
       } @empty {
-        <div class="article-preview">No articles are here... yet.</div>
+        <div class="article-preview empty-feed-message">
+          @if (isFollowingFeed) {
+            Your feed is empty. Follow some users to see their articles here, or check out the
+            <a routerLink="/">Global Feed</a>!
+          } @else {
+            No articles are here... yet.
+          }
+        </div>
       }
 
       <nav>
         <ul class="pagination">
           @for (pageNumber of totalPages; track pageNumber) {
-            <li class="page-item" [ngClass]="{ active: pageNumber === currentPage }">
+            <li class="page-item" [ngClass]="{ active: pageNumber === page }">
               <button class="page-link" (click)="setPageTo(pageNumber)">
                 {{ pageNumber }}
               </button>
@@ -34,28 +42,46 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
       </nav>
     }
   `,
-  imports: [ArticlePreviewComponent, NgClass],
+  imports: [ArticlePreviewComponent, NgClass, RouterLink],
   styles: `
     .page-link {
       cursor: pointer;
     }
   `,
 })
-export class ArticleListComponent {
+export class ArticleListComponent implements OnChanges {
   query!: ArticleListConfig;
   results: Article[] = [];
-  currentPage = 1;
+  page = 1;
   totalPages: Array<number> = [];
   loading = LoadingState.NOT_LOADED;
   LoadingState = LoadingState;
   destroyRef = inject(DestroyRef);
 
   @Input() limit!: number;
-  @Input()
-  set config(config: ArticleListConfig) {
-    if (config) {
-      this.query = config;
-      this.currentPage = 1;
+  @Input() config!: ArticleListConfig;
+  @Input() currentPage = 1;
+  @Input() isFollowingFeed = false;
+  @Output() pageChange = new EventEmitter<number>();
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const configChange = changes['config'];
+    const pageChange = changes['currentPage'];
+
+    if (configChange?.currentValue) {
+      this.query = configChange.currentValue;
+      // Only reset page if currentPage wasn't also provided in this change
+      if (!pageChange?.currentValue) {
+        this.page = 1;
+      }
+    }
+
+    if (pageChange?.currentValue) {
+      this.page = pageChange.currentValue;
+    }
+
+    // Run query if we have a config and either config or page changed
+    if (this.query && (configChange || pageChange)) {
       this.runQuery();
     }
   }
@@ -63,8 +89,11 @@ export class ArticleListComponent {
   constructor(private articlesService: ArticlesService) {}
 
   setPageTo(pageNumber: number) {
-    this.currentPage = pageNumber;
-    this.runQuery();
+    if (pageNumber !== this.page) {
+      this.page = pageNumber;
+      this.pageChange.emit(pageNumber);
+      this.runQuery();
+    }
   }
 
   runQuery() {
@@ -74,7 +103,7 @@ export class ArticleListComponent {
     // Create limit and offset filter (if necessary)
     if (this.limit) {
       this.query.filters.limit = this.limit;
-      this.query.filters.offset = this.limit * (this.currentPage - 1);
+      this.query.filters.offset = this.limit * (this.page - 1);
     }
 
     this.articlesService

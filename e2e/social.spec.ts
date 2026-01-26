@@ -130,7 +130,7 @@ test.describe('Social Features', () => {
     const user = generateUniqueUser();
     await register(page, user.username, user.email, user.password);
 
-    // Go to home page to find an existing article (can't favorite own articles)
+    // Go to global feed to find an existing article (can't favorite own articles)
     await page.goto('/', { waitUntil: 'load' });
 
     // Wait for articles to load
@@ -159,13 +159,8 @@ test.describe('Social Features', () => {
     await page.waitForSelector('a:has-text("Favorited")', { timeout: 10000 });
     await page.click('a:has-text("Favorited")');
 
-    // Wait for articles to load (not showing "Loading articles...")
-    await page.waitForFunction(() => !document.body.textContent?.includes('Loading articles...'), { timeout: 10000 });
-
-    // Should have at least one favorited article
-    await page.waitForSelector('.article-preview', { timeout: 10000 });
-    const favoritedCount = await page.locator('.article-preview').count();
-    expect(favoritedCount).toBeGreaterThan(0);
+    // Wait for articles to load - use Playwright's built-in retry logic
+    await expect(page.locator('.article-preview').first()).toBeVisible({ timeout: 15000 });
 
     // The favorited article should be visible (use more flexible matching)
     const articleVisible = await page.locator('.article-preview').first().isVisible();

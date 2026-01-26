@@ -9,6 +9,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/article/pages/home/home.component'),
   },
   {
+    path: 'tag/:tag',
+    loadComponent: () => import('./features/article/pages/home/home.component'),
+  },
+  {
     path: 'login',
     loadComponent: () => import('./core/auth/auth.component'),
     canActivate: [() => inject(UserService).isAuthenticated.pipe(map(isAuth => !isAuth))],

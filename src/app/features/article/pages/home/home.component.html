@@ -11,8 +11,8 @@
       <div class="col-md-9">
         <div class="feed-toggle">
           <ul class="nav nav-pills outline-active">
-            <li class="nav-item">
-              <a class="nav-link" [ngClass]="{ active: listConfig.type === 'feed' }" (click)="setListTo('feed')">
+            <li class="nav-item" *ifAuthenticated="true">
+              <a class="nav-link" [ngClass]="{ active: listConfig.type === 'feed' }" routerLink="/" [queryParams]="{ feed: 'following' }">
                 Your Feed
               </a>
             </li>
@@ -22,7 +22,7 @@
                 [ngClass]="{
                   active: listConfig.type === 'all' && !listConfig.filters.tag,
                 }"
-                (click)="setListTo('all')"
+                routerLink="/"
               >
                 Global Feed
               </a>
@@ -33,7 +33,7 @@
           </ul>
         </div>
 
-        <app-article-list [limit]="10" [config]="listConfig" />
+        <app-article-list [limit]="10" [config]="listConfig" [currentPage]="currentPage" [isFollowingFeed]="isFollowingFeed" (pageChange)="onPageChange($event)" />
       </div>
 
       <div class="col-md-3" *rxLet="tags$; let tags">
@@ -42,7 +42,7 @@
 
           <div class="tag-list">
             @for (tag of tags; track tag) {
-              <a class="tag-default tag-pill" (click)="setListTo('all', { tag: tag })">
+              <a class="tag-default tag-pill" [routerLink]="['/tag', tag]">
                 {{ tag }}
               </a>
             }

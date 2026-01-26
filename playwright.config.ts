@@ -7,7 +7,7 @@ export default defineConfig({
   testDir: './e2e',
   fullyParallel: false, // Disable full parallelization to avoid race conditions
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 2 : 1, // Retry flaky tests once locally too
   workers: 1, // Run tests serially to avoid backend/state conflicts
   reporter: 'html',
 

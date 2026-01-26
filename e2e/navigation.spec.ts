@@ -196,7 +196,7 @@ test.describe('Navigation and Filtering', () => {
     const article = generateUniqueArticle();
     await createArticle(page, article);
 
-    // Go to home
+    // Go to global feed to see the article we just created
     await page.goto('/');
 
     // Click on author name
@@ -218,7 +218,7 @@ test.describe('Navigation and Filtering', () => {
     await page.goto('/editor');
     await createArticle(page, article2);
 
-    // Favorite article1
+    // Favorite article1 - go to global feed to see the article
     await page.goto('/');
     await page.click(`.article-preview:has-text("${article1.title}") button.btn-outline-primary`);
 

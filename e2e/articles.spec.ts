@@ -84,6 +84,7 @@ test.describe('Articles', () => {
 
   test('should favorite an article', async ({ page }) => {
     // Use an existing article from the demo backend (can't favorite own articles)
+    // Go to global feed to see all articles
     await page.goto('/', { waitUntil: 'load' });
 
     // Click on the first article to go to its detail page
@@ -98,7 +99,7 @@ test.describe('Articles', () => {
   });
 
   test('should unfavorite an article', async ({ page }) => {
-    // Go to home page to find an article from demo backend (not own article)
+    // Go to global feed to find an article from demo backend (not own article)
     await page.goto('/', { waitUntil: 'load' });
 
     // Wait for articles to load
@@ -145,7 +146,7 @@ test.describe('Articles', () => {
 
     await createArticle(page, article);
 
-    // Go to home
+    // Go to global feed to see the article we just created
     await page.goto('/', { waitUntil: 'load' });
 
     // Wait for articles to load
@@ -170,7 +171,7 @@ test.describe('Articles', () => {
 
     await createArticle(page, article);
 
-    // Go to home
+    // Go to global feed to see the article we just created
     await page.goto('/');
 
     // Article preview should show correct information

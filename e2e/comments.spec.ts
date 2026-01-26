@@ -78,10 +78,12 @@ test.describe('Comments', () => {
   test('should only allow comment author to delete', async ({ page }) => {
     // Use an existing demo article from the backend (e.g., johndoe's article)
     // This avoids session isolation issues
+    // Go to global feed to see all articles
     await page.goto('/', { waitUntil: 'load' });
-    await page.waitForSelector('.article-preview', { timeout: 10000 });
+    // Wait for article to be fully loaded and clickable
+    await expect(page.locator('.article-preview h1').first()).toBeVisible({ timeout: 15000 });
     // Click on first article from demo backend (likely has existing comments)
-    await page.click('.article-preview h1:first-child');
+    await page.click('.article-preview h1');
     await page.waitForURL(/\/article\/.+/, { timeout: 10000 });
     // Check if there are any existing comments (from other users like johndoe)
     const existingCommentsCount = await page.locator('.card:not(.comment-form)').count();

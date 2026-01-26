@@ -1,7 +1,8 @@
 import { Page } from '@playwright/test';
 
 export async function addComment(page: Page, commentText: string) {
-  // Assumes we're on an article page
+  // Assumes we're on an article page - wait for comment form to be ready
+  await page.waitForSelector('textarea[placeholder="Write a comment..."]', { timeout: 10000 });
   await page.fill('textarea[placeholder="Write a comment..."]', commentText);
 
   // Get initial comment count (exclude the comment form itself)
