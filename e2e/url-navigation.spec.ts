@@ -287,7 +287,9 @@ test.describe('Pagination', () => {
     await page.click('.pagination button:has-text("2")');
 
     // Wait for page 2 to be active (Angular routing/rendering delay)
-    await expect(page.locator('.pagination .page-item:has(button:has-text("2"))')).toHaveClass(/active/, { timeout: 10000 });
+    await expect(page.locator('.pagination .page-item:has(button:has-text("2"))')).toHaveClass(/active/, {
+      timeout: 10000,
+    });
     await page.waitForSelector('.article-preview', { timeout: 10000 });
 
     // URL should show ?page=2

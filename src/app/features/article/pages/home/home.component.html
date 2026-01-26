@@ -12,7 +12,12 @@
         <div class="feed-toggle">
           <ul class="nav nav-pills outline-active">
             <li class="nav-item" *ifAuthenticated="true">
-              <a class="nav-link" [ngClass]="{ active: listConfig.type === 'feed' }" routerLink="/" [queryParams]="{ feed: 'following' }">
+              <a
+                class="nav-link"
+                [ngClass]="{ active: listConfig.type === 'feed' }"
+                routerLink="/"
+                [queryParams]="{ feed: 'following' }"
+              >
                 Your Feed
               </a>
             </li>
@@ -33,7 +38,13 @@
           </ul>
         </div>
 
-        <app-article-list [limit]="10" [config]="listConfig" [currentPage]="currentPage" [isFollowingFeed]="isFollowingFeed" (pageChange)="onPageChange($event)" />
+        <app-article-list
+          [limit]="10"
+          [config]="listConfig"
+          [currentPage]="currentPage"
+          [isFollowingFeed]="isFollowingFeed"
+          (pageChange)="onPageChange($event)"
+        />
       </div>
 
       <div class="col-md-3" *rxLet="tags$; let tags">

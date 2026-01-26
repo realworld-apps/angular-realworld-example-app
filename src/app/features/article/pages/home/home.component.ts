@@ -37,11 +37,7 @@ export default class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    combineLatest([
-      this.userService.isAuthenticated,
-      this.route.params,
-      this.route.queryParams,
-    ])
+    combineLatest([this.userService.isAuthenticated, this.route.params, this.route.queryParams])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(([isAuthenticated, params, queryParams]) => {
         this.isAuthenticated = isAuthenticated;
