@@ -17,7 +17,7 @@ We're currently working on some docs for the codebase (explaining where function
 
 # Getting started
 
-Make sure you have the [Angular CLI](https://github.com/angular/angular-cli#installation) installed globally. You can `npm install` to resolve all dependencies (should take a couple of seconds).
+Make sure you have the [Angular CLI](https://github.com/angular/angular-cli#installation) installed globally. You can `bun install` to resolve all dependencies (should take a couple of seconds).
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
