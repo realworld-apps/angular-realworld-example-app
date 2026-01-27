@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, DestroyRef, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, DestroyRef, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { ArticlesService } from '../services/articles.service';
 import { ArticleListConfig } from '../models/article-list-config.model';
 import { Article } from '../models/article.model';
@@ -86,8 +86,6 @@ export class ArticleListComponent implements OnChanges {
     }
   }
 
-  private cdr = inject(ChangeDetectorRef);
-
   constructor(private articlesService: ArticlesService) {}
 
   setPageTo(pageNumber: number) {
@@ -117,7 +115,6 @@ export class ArticleListComponent implements OnChanges {
 
         // Used from http://www.jstips.co/en/create-range-0...n-easily-using-one-line/
         this.totalPages = Array.from(new Array(Math.ceil(data.articlesCount / this.limit)), (val, index) => index + 1);
-        this.cdr.markForCheck();
       });
   }
 }
