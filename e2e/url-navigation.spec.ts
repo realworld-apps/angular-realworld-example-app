@@ -252,14 +252,12 @@ test.describe('Pagination', () => {
     await page.click('.pagination button:has-text("2")');
     await expect(page).toHaveURL(new RegExp(`/tag/${uniqueTag}\\?page=2`));
 
-    // Click Global Feed
+    // Click Global Feed and wait for URL to change to root path
     await page.click('.nav-link:has-text("Global Feed")');
-    await page.waitForSelector('.article-preview', { timeout: 10000 });
+    await expect(page).toHaveURL('/');
 
-    // Should be on page 1 (no ?page param)
-    const url = new URL(page.url());
-    expect(url.pathname).toBe('/');
-    expect(url.searchParams.has('page')).toBe(false);
+    // Verify articles loaded
+    await page.waitForSelector('.article-preview', { timeout: 10000 });
   });
 
   test('tag pagination shows correct articles per page', async ({ page, request }) => {
