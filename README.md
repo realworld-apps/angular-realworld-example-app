@@ -63,4 +63,4 @@ RealWorld Angular](https://github.com/realworld-angular) organization that is sp
 ## License
 
 - **Project code**: [MIT License](LICENSE)
-- **Angular logo**: The Angular logo is a trademark of Google LLC, used here to indicate this project is built with Angular. This project is not officially affiliated with or endorsed by Google. See [Angular's press kit](https://angular.dev/press-kit) for brand guidelines.
+- **Angular logo**: The Angular logo is a trademark of Google LLC, used to indicate this project is built with Angular.
