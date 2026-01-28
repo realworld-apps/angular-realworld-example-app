@@ -6,7 +6,7 @@ import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@ang
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { firstValueFrom } from 'rxjs';
 import { Articles } from './articles';
-import { Article } from '../models/article.model';
+import { ArticleModel } from '../models/article.model';
 import { ArticleListConfig } from '../models/article-list-config.model';
 
 describe('Articles', () => {
@@ -17,7 +17,7 @@ describe('Articles', () => {
   let service: Articles;
   let httpMock: HttpTestingController;
 
-  const mockArticle: Article = {
+  const mockArticle: ArticleModel = {
     slug: 'test-article',
     title: 'Test Article',
     description: 'Test description',
@@ -35,7 +35,7 @@ describe('Articles', () => {
     },
   };
 
-  const mockArticleList: Article[] = [
+  const mockArticleList: ArticleModel[] = [
     mockArticle,
     {
       ...mockArticle,
@@ -193,7 +193,7 @@ describe('Articles', () => {
 
   describe('create', () => {
     it('should create new article', async () => {
-      const newArticle: Partial<Article> = {
+      const newArticle: Partial<ArticleModel> = {
         title: 'New Article',
         description: 'New description',
         body: 'New body',
@@ -209,7 +209,7 @@ describe('Articles', () => {
     });
 
     it('should handle validation errors', async () => {
-      const invalidArticle: Partial<Article> = {
+      const invalidArticle: Partial<ArticleModel> = {
         title: '',
         description: '',
         body: '',
@@ -224,7 +224,7 @@ describe('Articles', () => {
 
   describe('update', () => {
     it('should update existing article', async () => {
-      const updates: Partial<Article> = {
+      const updates: Partial<ArticleModel> = {
         slug: 'existing-article',
         title: 'Updated Title',
         description: 'Updated description',

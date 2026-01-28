@@ -6,7 +6,7 @@ import { NgClass } from '@angular/common';
 import { ArticleList } from '../../components/article-list';
 import { combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { User } from '../../../../core/auth/services/user';
+import { UserAuth } from '../../../../core/auth/services/user-auth';
 import { RxLet } from '@rx-angular/template/let';
 import { IfAuthenticated } from '../../../../core/auth/if-authenticated';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -35,7 +35,7 @@ export default class Home implements OnInit {
   constructor(
     private readonly router: Router,
     private readonly route: ActivatedRoute,
-    private readonly userService: User,
+    private readonly userService: UserAuth,
   ) {}
 
   ngOnInit(): void {

@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ArticleList } from '../../article/components/article-list';
-import { Profile } from '../services/profile';
-import { Profile } from '../models/profile.model';
+import { ProfileDataAccess } from '../services/profile-data-access';
+import { ProfileModel } from '../models/profile.model';
 import { ArticleListConfig } from '../../article/models/article-list-config.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -15,13 +15,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ProfileFavorites implements OnInit {
-  profile = signal<Profile | null>(null);
+  profile = signal<ProfileModel | null>(null);
   favoritesConfig = signal<ArticleListConfig | null>(null);
   destroyRef = inject(DestroyRef);
 
   constructor(
     private route: ActivatedRoute,
-    private readonly profileService: Profile,
+    private readonly profileService: ProfileDataAccess,
   ) {}
 
   ngOnInit() {
@@ -29,7 +29,7 @@ export default class ProfileFavorites implements OnInit {
       .get(this.route.parent?.snapshot.params['username'])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (profile: Profile) => {
+        next: (profile: ProfileModel) => {
           this.profile.set(profile);
           this.favoritesConfig.set({
             type: 'all',

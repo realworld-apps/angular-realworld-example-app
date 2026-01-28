@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal 
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { User } from '../../../../core/auth/user.model';
-import { Article } from '../../models/article.model';
+import { ArticleModel } from '../../models/article.model';
 import { Articles } from '../../services/articles';
 import { Comments } from '../../services/comments';
-import { User } from '../../../../core/auth/services/user';
+import { UserAuth } from '../../../../core/auth/services/user-auth';
 import { ArticleMeta } from '../../components/article-meta';
 import { AsyncPipe, NgClass } from '@angular/common';
 import { MarkdownPipe } from '../../../../shared/pipes/markdown-pipe';
@@ -16,7 +16,7 @@ import { combineLatest, throwError } from 'rxjs';
 import { Comment } from '../../models/comment.model';
 import { IfAuthenticated } from '../../../../core/auth/if-authenticated';
 import { Errors } from '../../../../core/models/errors.model';
-import { Profile } from '../../../profile/models/profile.model';
+import { ProfileModel } from '../../../profile/models/profile.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FavoriteButton } from '../../components/favorite-button';
 import { FollowButton } from '../../../profile/components/follow-button';
@@ -41,7 +41,7 @@ import { FollowButton } from '../../../profile/components/follow-button';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class Article implements OnInit {
-  article = signal<Article>(null!);
+  article = signal<ArticleModel>(null!);
   currentUser = signal<User | null>(null);
   comments = signal<Comment[]>([]);
   canModify = signal(false);
@@ -58,7 +58,7 @@ export default class Article implements OnInit {
     private readonly articleService: Articles,
     private readonly commentsService: Comments,
     private readonly router: Router,
-    private readonly userService: User,
+    private readonly userService: UserAuth,
   ) {}
 
   ngOnInit(): void {
@@ -87,7 +87,7 @@ export default class Article implements OnInit {
     }));
   }
 
-  toggleFollowing(profile: Profile): void {
+  toggleFollowing(profile: ProfileModel): void {
     this.article.update(article => ({
       ...article,
       author: { ...article.author, following: profile.following },

@@ -8,7 +8,7 @@ import { User } from '../user.model';
 import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
-export class User {
+export class UserAuth {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser = this.currentUserSubject.asObservable().pipe(distinctUntilChanged());
 

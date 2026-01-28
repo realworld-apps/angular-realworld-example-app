@@ -20,7 +20,6 @@ describe('Comments', () => {
     id: '1',
     body: 'Test comment',
     createdAt: '2024-01-01',
-    updatedAt: '2024-01-02',
     author: {
       username: 'testuser',
       bio: 'Test bio',

@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import { Errors } from '../../../../core/models/errors.model';
 import { Articles } from '../../services/articles';
-import { User } from '../../../../core/auth/services/user';
+import { UserAuth } from '../../../../core/auth/services/user-auth';
 import { ListErrors } from '../../../../shared/components/list-errors';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -37,7 +37,7 @@ export default class Editor implements OnInit {
     private readonly articleService: Articles,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
-    private readonly userService: User,
+    private readonly userService: UserAuth,
   ) {}
 
   ngOnInit() {

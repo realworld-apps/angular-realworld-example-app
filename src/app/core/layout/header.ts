@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { User } from '../auth/services/user';
+import { UserAuth } from '../auth/services/user-auth';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { IfAuthenticated } from '../auth/if-authenticated';
@@ -11,5 +11,5 @@ import { IfAuthenticated } from '../auth/if-authenticated';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Header {
-  currentUser$ = inject(User).currentUser;
+  currentUser$ = inject(UserAuth).currentUser;
 }

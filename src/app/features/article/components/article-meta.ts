@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { Article } from '../models/article.model';
+import { ArticleModel } from '../models/article.model';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 
@@ -27,5 +27,5 @@ import { DatePipe } from '@angular/common';
   imports: [RouterLink, DatePipe],
 })
 export class ArticleMeta {
-  @Input() article!: Article;
+  @Input() article!: ArticleModel;
 }
