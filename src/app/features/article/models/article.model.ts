@@ -1,6 +1,6 @@
-import { Profile } from '../../profile/models/profile.model';
+import { ProfileModel } from '../../profile/models/profile.model';
 
-export interface Article {
+export interface ArticleModel {
   slug: string;
   title: string;
   description: string;
@@ -10,5 +10,5 @@ export interface Article {
   updatedAt: string;
   favorited: boolean;
   favoritesCount: number;
-  author: Profile;
+  author: ProfileModel;
 }

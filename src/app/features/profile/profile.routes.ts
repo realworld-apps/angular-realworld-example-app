@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { ProfileComponent } from './pages/profile/profile.component';
+import { Profile } from './pages/profile/profile';
 
 const routes: Routes = [
   {
@@ -7,15 +7,15 @@ const routes: Routes = [
     children: [
       {
         path: ':username',
-        component: ProfileComponent,
+        component: Profile,
         children: [
           {
             path: '',
-            loadComponent: () => import('./components/profile-articles.component'),
+            loadComponent: () => import('./components/profile-articles'),
           },
           {
             path: 'favorites',
-            loadComponent: () => import('./components/profile-favorites.component'),
+            loadComponent: () => import('./components/profile-favorites'),
           },
         ],
       },
