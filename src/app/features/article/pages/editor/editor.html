@@ -44,10 +44,10 @@
               />
               <div class="tag-list">
                 @for (tag of tagList(); track tag) {
-                <span class="tag-default tag-pill">
-                  <i class="ion-close-round" (click)="removeTag(tag)"></i>
-                  {{ tag }}
-                </span>
+                  <span class="tag-default tag-pill">
+                    <i class="ion-close-round" (click)="removeTag(tag)"></i>
+                    {{ tag }}
+                  </span>
                 }
               </div>
             </fieldset>

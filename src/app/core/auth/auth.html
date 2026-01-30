@@ -5,9 +5,11 @@
         <h1 class="text-xs-center">{{ title }}</h1>
         <p class="text-xs-center">
           @if (authType === 'register') {
-          <a [routerLink]="['/login']">Have an account?</a>
-          } @if (authType === 'login') {
-          <a [routerLink]="['/register']">Need an account?</a>
+            <a [routerLink]="['/login']">Have an account?</a>
+          }
+
+          @if (authType === 'login') {
+            <a [routerLink]="['/register']">Need an account?</a>
           }
         </p>
         <app-list-errors [errors]="errors()" />
@@ -15,12 +17,12 @@
           <fieldset [disabled]="isSubmitting()">
             <fieldset class="form-group">
               @if (authType === 'register') {
-              <input
-                formControlName="username"
-                placeholder="Username"
-                class="form-control form-control-lg"
-                type="text"
-              />
+                <input
+                  formControlName="username"
+                  placeholder="Username"
+                  class="form-control form-control-lg"
+                  type="text"
+                />
               }
             </fieldset>
             <fieldset class="form-group">

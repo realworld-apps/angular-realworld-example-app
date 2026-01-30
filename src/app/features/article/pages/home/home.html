@@ -53,7 +53,9 @@
 
           <div class="tag-list">
             @for (tag of tags; track tag) {
-            <a class="tag-default tag-pill" [routerLink]="['/tag', tag]"> {{ tag }} </a>
+              <a class="tag-default tag-pill" [routerLink]="['/tag', tag]">
+                {{ tag }}
+              </a>
             }
           </div>
 
