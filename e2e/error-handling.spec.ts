@@ -183,6 +183,18 @@ test.describe('Error Handling - 401 Unauthorized', () => {
 
 test.describe('Error Handling - 403 Forbidden', () => {
   test('should handle 403 when updating article', async ({ page }) => {
+    const mockArticle = {
+      slug: 'test-article',
+      title: 'Test Article',
+      description: 'Test description',
+      body: 'Test body',
+      tagList: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      favorited: false,
+      favoritesCount: 0,
+      author: { username: 'currentuser', bio: '', image: '', following: false },
+    };
     // Mock user fetch
     await page.route(`${API_BASE}/user`, (route) => {
       route.fulfill({
@@ -193,9 +205,15 @@ test.describe('Error Handling - 403 Forbidden', () => {
         }),
       });
     });
-    // Mock article update with 403
-    await page.route(`${API_BASE}/articles/*`, (route) => {
-      if (route.request().method() === 'PUT') {
+    // Mock article fetch (GET) and update (PUT with 403)
+    await page.route(`${API_BASE}/articles/test-article`, (route) => {
+      if (route.request().method() === 'GET') {
+        route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ article: mockArticle }),
+        });
+      } else if (route.request().method() === 'PUT') {
         route.fulfill({
           status: 403,
           contentType: 'application/json',
@@ -207,37 +225,137 @@ test.describe('Error Handling - 403 Forbidden', () => {
     });
     await page.goto('/');
     await setFakeAuthToken(page);
-    // Just verify app doesn't crash on 403
-    await expect(page.locator('nav.navbar')).toBeVisible();
-    // TODO add another check to ensure expected content is there?
+    await page.goto('/editor/test-article');
+    // Wait for form to load
+    await expect(page.locator('input[formControlName="title"]')).toHaveValue('Test Article');
+    // Try to update
+    await page.click('button:has-text("Publish")');
+    // Should show error message
+    await expect(page.locator('.error-messages')).toBeVisible();
+    await expect(page.locator('input[formControlName="title"]')).toBeVisible();
   });
 
   test('should handle 403 when deleting another users comment', async ({ page }) => {
-    await mockApiError(page, '/articles/*/comments/*', 403, {
-      errors: { message: ['You are not authorized to delete this comment'] },
-    }, 'DELETE');
-    await page.goto('/');
-    // App should remain functional
-    await expect(page.locator('nav.navbar')).toBeVisible();
-    // TODO add another check to ensure expected content is there?
-  });
-
-  test('should handle 403 when accessing admin-only resource', async ({ page }) => {
+    const mockArticle = {
+      slug: 'test-article',
+      title: 'Test Article',
+      description: 'Test description',
+      body: 'Test body',
+      tagList: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      favorited: false,
+      favoritesCount: 0,
+      author: { username: 'otheruser', bio: '', image: '', following: false },
+    };
+    const mockComment = {
+      id: 1,
+      body: 'This is a comment',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      author: { username: 'currentuser', bio: '', image: '', following: false },
+    };
+    // Mock user fetch
     await page.route(`${API_BASE}/user`, (route) => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          user: { username: 'regularuser', email: 'test@test.com', token: 'fake-token', bio: null, image: null },
+          user: { username: 'currentuser', email: 'test@test.com', token: 'fake-token', bio: null, image: null },
         }),
+      });
+    });
+    // Mock article fetch
+    await page.route(`${API_BASE}/articles/test-article`, (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ article: mockArticle }),
+      });
+    });
+    // Mock comments fetch (GET) and delete (DELETE with 403)
+    await page.route(`${API_BASE}/articles/test-article/comments`, (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ comments: [mockComment] }),
+      });
+    });
+    await page.route(`${API_BASE}/articles/test-article/comments/1`, (route) => {
+      if (route.request().method() === 'DELETE') {
+        route.fulfill({
+          status: 403,
+          contentType: 'application/json',
+          body: JSON.stringify({ errors: { message: ['You are not authorized to delete this comment'] } }),
+        });
+      } else {
+        route.continue();
+      }
+    });
+    await page.goto('/');
+    await setFakeAuthToken(page);
+    await page.goto('/article/test-article');
+    // Wait for comment to be visible
+    await expect(page.locator('.card-block:has-text("This is a comment")')).toBeVisible();
+    // Click delete button on the comment
+    await page.locator('.card-block:has-text("This is a comment")').locator('i.ion-trash-a').click();
+    // Comment should still be visible (delete failed), app should not crash
+    // TODO verify a local failure indicator is present?
+    await expect(page.locator('.card-block:has-text("This is a comment")')).toBeVisible();
+    await expect(page.locator('nav.navbar')).toBeVisible();
+  });
+
+  test('should handle 403 when following user you are blocked by', async ({ page }) => {
+    const mockProfile = {
+      username: 'blockeduser',
+      bio: 'This user blocked you',
+      image: '',
+      following: false,
+    };
+    // Mock user fetch
+    await page.route(`${API_BASE}/user`, (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          user: { username: 'currentuser', email: 'test@test.com', token: 'fake-token', bio: null, image: null },
+        }),
+      });
+    });
+    // Mock profile fetch
+    await page.route(`${API_BASE}/profiles/blockeduser`, (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ profile: mockProfile }),
+      });
+    });
+    // Mock articles for profile
+    await page.route(`${API_BASE}/articles?author=blockeduser*`, (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ articles: [], articlesCount: 0 }),
+      });
+    });
+    // Mock follow with 403
+    await page.route(`${API_BASE}/profiles/blockeduser/follow`, (route) => {
+      route.fulfill({
+        status: 403,
+        contentType: 'application/json',
+        body: JSON.stringify({ errors: { message: ['You cannot follow this user'] } }),
       });
     });
     await page.goto('/');
     await setFakeAuthToken(page);
-    // Even with 403 responses, app should not crash
-    await expect(page.locator('nav.navbar')).toBeVisible();
-    await expect(page.locator('.navbar-brand')).toBeVisible();
-    // TODO add another check to ensure expected content is there?
+    await page.goto('/profile/blockeduser');
+    // Wait for profile to load
+    await expect(page.locator('button:has-text("Follow")')).toBeVisible();
+    // Try to follow
+    await page.click('button:has-text("Follow")');
+    // App should not crash, button should still show Follow (not Unfollow)
+    await expect(page.locator('button:has-text("Follow")')).toBeVisible();
+    await expect(page.locator('.user-info')).toBeVisible();
   });
 });
 
