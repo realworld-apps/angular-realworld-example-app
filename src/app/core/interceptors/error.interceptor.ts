@@ -43,9 +43,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       // Normalize error format: { errors: {...}, status: number }
       // Provides fallback message for network errors (status 0) or missing body
-      const body = err.error && typeof err.error === 'object' && 'errors' in err.error
-        ? err.error
-        : { errors: { network: ['Unable to connect. Please check your internet connection.'] } };
+      const body =
+        err.error && typeof err.error === 'object' && 'errors' in err.error
+          ? err.error
+          : { errors: { network: ['Unable to connect. Please check your internet connection.'] } };
 
       return throwError(() => ({ ...body, status: err.status }));
     }),

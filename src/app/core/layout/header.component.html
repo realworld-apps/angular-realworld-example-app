@@ -2,51 +2,98 @@
   <div class="container">
     <a class="navbar-brand" routerLink="/">conduit</a>
 
-    <!-- Show this for logged out users -->
-    <ul *ifAuthenticated="false" class="nav navbar-nav pull-xs-right">
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/"> Home </a>
-      </li>
+    @if (authState$ | async; as authState) {
+      <!-- Show this for logged out users -->
+      @if (authState === 'unauthenticated') {
+        <ul class="nav navbar-nav pull-xs-right">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/"> Home </a>
+          </li>
 
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/login" routerLinkActive="active"> Sign in </a>
-      </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/login" routerLinkActive="active"> Sign in </a>
+          </li>
 
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/register" routerLinkActive="active"> Sign up </a>
-      </li>
-    </ul>
-
-    <!-- Show this for logged in users -->
-    <ul *ifAuthenticated="true" class="nav navbar-nav pull-xs-right">
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          Home
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/editor" routerLinkActive="active">
-          <i class="ion-compose"></i>&nbsp;New Article
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/settings" routerLinkActive="active">
-          <i class="ion-gear-a"></i>&nbsp;Settings
-        </a>
-      </li>
-
-      @if (currentUser$ | async; as currentUser) {
-        <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/profile', currentUser.username]" routerLinkActive="active">
-            @if (currentUser.image) {
-              <img [src]="currentUser.image" class="user-pic" />
-            }
-            {{ currentUser.username }}
-          </a>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/register" routerLinkActive="active"> Sign up </a>
+          </li>
+        </ul>
       }
-    </ul>
+
+      <!-- Show this for logged in users -->
+      @if (authState === 'authenticated') {
+        <ul class="nav navbar-nav pull-xs-right">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+              Home
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/editor" routerLinkActive="active">
+              <i class="ion-compose"></i>&nbsp;New Article
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/settings" routerLinkActive="active">
+              <i class="ion-gear-a"></i>&nbsp;Settings
+            </a>
+          </li>
+
+          @if (currentUser$ | async; as currentUser) {
+            <li class="nav-item">
+              <a class="nav-link" [routerLink]="['/profile', currentUser.username]" routerLinkActive="active">
+                @if (currentUser.image) {
+                  <img [src]="currentUser.image" class="user-pic" />
+                }
+                {{ currentUser.username }}
+              </a>
+            </li>
+          }
+        </ul>
+      }
+
+      <!-- Show this when auth is temporarily unavailable (server error) -->
+      @if (authState === 'unavailable') {
+        <ul class="nav navbar-nav pull-xs-right">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+              Home
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/editor" routerLinkActive="active">
+              <i class="ion-compose"></i>&nbsp;New Article
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/settings" routerLinkActive="active">
+              <i class="ion-gear-a"></i>&nbsp;Settings
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <span class="nav-link" title="Auth unavailable - retrying automatically">
+              <i class="ion-load-c"></i>&nbsp;Connecting...
+            </span>
+          </li>
+        </ul>
+      }
+
+      <!-- Show this while loading auth state -->
+      @if (authState === 'loading') {
+        <ul class="nav navbar-nav pull-xs-right">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/"> Home </a>
+          </li>
+          <li class="nav-item">
+            <span class="nav-link">Loading...</span>
+          </li>
+        </ul>
+      }
+    }
   </div>
 </nav>

@@ -8,9 +8,7 @@ import { map } from 'rxjs/operators';
  */
 const requireAuth = () => {
   const router = inject(Router);
-  return inject(UserService).isAuthenticated.pipe(
-    map(isAuth => isAuth || router.createUrlTree(['/login']))
-  );
+  return inject(UserService).isAuthenticated.pipe(map(isAuth => isAuth || router.createUrlTree(['/login'])));
 };
 
 export const routes: Routes = [
