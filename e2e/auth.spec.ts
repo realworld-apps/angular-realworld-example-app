@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { register, login, logout, generateUniqueUser } from './helpers/auth';
+import { getToken, getAuthState } from './helpers/debug';
 
 test.describe('Authentication', () => {
   test('should register a new user', async ({ page }) => {
@@ -93,8 +94,10 @@ test.describe('Authentication', () => {
     // The app should still load and show the unauthenticated UI
     await expect(page.locator('a[href="/login"]')).toBeVisible();
     await expect(page.locator('a[href="/register"]')).toBeVisible();
-    // The invalid token should be cleared
-    const token = await page.evaluate(() => localStorage.getItem('jwtToken'));
+    // The invalid token should be cleared (use debug interface)
+    const token = await getToken(page);
     expect(token).toBeNull();
+    const authState = await getAuthState(page);
+    expect(authState).toBe('unauthenticated');
   });
 });

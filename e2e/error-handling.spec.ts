@@ -94,29 +94,37 @@ test.describe('Error Handling - 400 Bad Request', () => {
 });
 
 test.describe('Error Handling - 401 Unauthorized', () => {
-  test('should handle 401 on page load with invalid token', async ({ page }) => {
-    await page.goto('/');
-    await setFakeAuthToken(page);
-    await mockApiError(page, '/user', 401, {
-      errors: { message: ['Token is invalid or expired'] },
-    });
-    await page.reload();
-    // App should not crash - should show logged out state
-    await expect(page.locator('nav.navbar')).toBeVisible();
-    await expect(page.locator('a[href="/login"]')).toBeVisible();
-    // 401 on /user shouldn't break unrelated features
-    await expect(page.locator('.article-preview').first()).toBeVisible();
-  });
+  // Note: 401 on page load is tested in user-fetch-errors.spec.ts
 
-  test('should handle 401 when accessing protected route', async ({ page }) => {
-    await mockApiError(page, '/user', 401, {
-      errors: { message: ['Unauthorized'] },
+  test('should handle 401 when submitting settings form', async ({ page }) => {
+    // Mock GET /user to succeed (so we can load the settings page)
+    // Mock PUT /user to return 401 (session expired mid-edit)
+    await page.route(`${API_BASE}/user`, (route) => {
+      if (route.request().method() === 'GET') {
+        route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            user: { username: 'testuser', email: 'test@test.com', token: 'fake-token', bio: 'bio', image: null },
+          }),
+        });
+      } else if (route.request().method() === 'PUT') {
+        route.fulfill({
+          status: 401,
+          contentType: 'application/json',
+          body: JSON.stringify({ errors: { message: ['Session expired'] } }),
+        });
+      }
     });
     await page.goto('/');
     await setFakeAuthToken(page);
     await page.goto('/settings');
-    // Should redirect to login
-    await expect(page.locator('nav.navbar')).toBeVisible();
+    // Wait for form to load
+    await expect(page.locator('input[formControlName="email"]')).toBeVisible();
+    // Submit the form
+    await page.click('button[type="submit"]');
+    // Should show error message, form should still be usable
+    await expect(page.locator('.error-messages')).toBeVisible();
     await expect(page.locator('input[formControlName="email"]')).toBeVisible();
   });
 
