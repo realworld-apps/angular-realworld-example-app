@@ -12,7 +12,7 @@ import { MarkdownPipe } from '../../../../shared/pipes/markdown.pipe';
 import { ListErrorsComponent } from '../../../../shared/components/list-errors.component';
 import { ArticleCommentComponent } from '../../components/article-comment.component';
 import { catchError } from 'rxjs/operators';
-import { combineLatest, throwError } from 'rxjs';
+import { combineLatest, EMPTY } from 'rxjs';
 import { Comment } from '../../models/comment.model';
 import { IfAuthenticatedDirective } from '../../../../core/auth/if-authenticated.directive';
 import { Errors } from '../../../../core/models/errors.model';
@@ -41,13 +41,15 @@ import { FollowButtonComponent } from '../../../profile/components/follow-button
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ArticleComponent implements OnInit {
-  article = signal<Article>(null!);
+  article = signal<Article | null>(null);
   currentUser = signal<User | null>(null);
   comments = signal<Comment[]>([]);
   canModify = signal(false);
+  errors = signal<Errors | null>(null);
 
   commentControl = new FormControl<string>('', { nonNullable: true });
   commentFormErrors = signal<Errors | null>(null);
+  deleteCommentErrors = signal<Errors | null>(null);
 
   isSubmitting = signal(false);
   isDeleting = signal(false);
@@ -66,8 +68,8 @@ export default class ArticleComponent implements OnInit {
     combineLatest([this.articleService.get(slug), this.commentsService.getAll(slug), this.userService.currentUser])
       .pipe(
         catchError(err => {
-          void this.router.navigate(['/']);
-          return throwError(() => err);
+          this.errors.set(err.errors || { error: ['Failed to load article'] });
+          return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),
       )
@@ -80,25 +82,34 @@ export default class ArticleComponent implements OnInit {
   }
 
   onToggleFavorite(favorited: boolean): void {
-    this.article.update(article => ({
-      ...article,
-      favorited,
-      favoritesCount: favorited ? article.favoritesCount + 1 : article.favoritesCount - 1,
-    }));
+    this.article.update(article => {
+      if (!article) return article;
+      return {
+        ...article,
+        favorited,
+        favoritesCount: favorited ? article.favoritesCount + 1 : article.favoritesCount - 1,
+      };
+    });
   }
 
   toggleFollowing(profile: Profile): void {
-    this.article.update(article => ({
-      ...article,
-      author: { ...article.author, following: profile.following },
-    }));
+    this.article.update(article => {
+      if (!article) return article;
+      return {
+        ...article,
+        author: { ...article.author, following: profile.following },
+      };
+    });
   }
 
   deleteArticle(): void {
+    const article = this.article();
+    if (!article) return;
+
     this.isDeleting.set(true);
 
     this.articleService
-      .delete(this.article().slug)
+      .delete(article.slug)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         void this.router.navigate(['/']);
@@ -106,11 +117,14 @@ export default class ArticleComponent implements OnInit {
   }
 
   addComment() {
+    const article = this.article();
+    if (!article) return;
+
     this.isSubmitting.set(true);
     this.commentFormErrors.set(null);
 
     this.commentsService
-      .add(this.article().slug, this.commentControl.value)
+      .add(article.slug, this.commentControl.value)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: comment => {
@@ -126,11 +140,20 @@ export default class ArticleComponent implements OnInit {
   }
 
   deleteComment(comment: Comment): void {
+    const article = this.article();
+    if (!article) return;
+
+    this.deleteCommentErrors.set(null);
     this.commentsService
-      .delete(comment.id, this.article().slug)
+      .delete(comment.id, article.slug)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.comments.update(comments => comments.filter(item => item !== comment));
+      .subscribe({
+        next: () => {
+          this.comments.update(comments => comments.filter(item => item !== comment));
+        },
+        error: errors => {
+          this.deleteCommentErrors.set(errors);
+        },
       });
   }
 }

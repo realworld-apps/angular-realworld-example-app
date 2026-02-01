@@ -1,14 +1,23 @@
-@if (profile()) {
-  <div class="profile-page">
+<div class="profile-page">
+  @if (errors()) {
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 col-md-10 offset-md-1">
+          <app-list-errors [errors]="errors()" />
+        </div>
+      </div>
+    </div>
+  }
+  @if (profile(); as p) {
     <div class="user-info">
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-md-10 offset-md-1">
-            <img [src]="profile().image" class="user-img" />
-            <h4>{{ profile().username }}</h4>
-            <p>{{ profile().bio }}</p>
+            <img [src]="p.image" class="user-img" />
+            <h4>{{ p.username }}</h4>
+            <p>{{ p.bio }}</p>
             @if (!isUser()) {
-              <app-follow-button [profile]="profile()" (toggle)="onToggleFollowing($event)" />
+              <app-follow-button [profile]="p" (toggle)="onToggleFollowing($event)" />
             }
             @if (isUser()) {
               <a [routerLink]="['/settings']" class="btn btn-sm btn-outline-secondary action-btn">
@@ -30,7 +39,7 @@
                   class="nav-link"
                   routerLinkActive="active"
                   [routerLinkActiveOptions]="{ exact: true }"
-                  [routerLink]="['/profile', profile().username]"
+                  [routerLink]="['/profile', p.username]"
                 >
                   My Posts
                 </a>
@@ -40,7 +49,7 @@
                   class="nav-link"
                   routerLinkActive="active"
                   [routerLinkActiveOptions]="{ exact: true }"
-                  [routerLink]="['/profile', profile().username, 'favorites']"
+                  [routerLink]="['/profile', p.username, 'favorites']"
                 >
                   Favorited Posts
                 </a>
@@ -52,5 +61,5 @@
         </div>
       </div>
     </div>
-  </div>
-}
+  }
+</div>
