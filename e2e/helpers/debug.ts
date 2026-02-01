@@ -60,14 +60,10 @@ export async function getCurrentUser(page: Page): Promise<User | null> {
 export async function waitForAuthState(
   page: Page,
   expectedState: AuthState,
-  options: { timeout?: number } = {}
+  options: { timeout?: number } = {},
 ): Promise<void> {
   const timeout = options.timeout ?? 5000;
-  await page.waitForFunction(
-    (state) => window.__conduit_debug__?.getAuthState() === state,
-    expectedState,
-    { timeout }
-  );
+  await page.waitForFunction(state => window.__conduit_debug__?.getAuthState() === state, expectedState, { timeout });
 }
 
 /**

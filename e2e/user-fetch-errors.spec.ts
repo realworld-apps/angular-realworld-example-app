@@ -15,7 +15,7 @@ const API_BASE = 'https://api.realworld.show/api';
 test.describe('User Fetch Errors on App Initialization - 4XX (should logout)', () => {
   test('should handle 400 Bad Request on /api/user', async ({ page }) => {
     // Set up route mock BEFORE navigating
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 400,
         contentType: 'application/json',
@@ -38,7 +38,7 @@ test.describe('User Fetch Errors on App Initialization - 4XX (should logout)', (
   });
 
   test('should handle 401 Unauthorized on /api/user', async ({ page }) => {
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 401,
         contentType: 'application/json',
@@ -64,7 +64,7 @@ test.describe('User Fetch Errors on App Initialization - 4XX (should logout)', (
   });
 
   test('should handle 403 Forbidden on /api/user', async ({ page }) => {
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 403,
         contentType: 'application/json',
@@ -86,7 +86,7 @@ test.describe('User Fetch Errors on App Initialization - 4XX (should logout)', (
   });
 
   test('should handle 404 Not Found on /api/user', async ({ page }) => {
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 404,
         contentType: 'application/json',
@@ -110,7 +110,7 @@ test.describe('User Fetch Errors on App Initialization - 4XX (should logout)', (
 
 test.describe('User Fetch Errors on App Initialization - 5XX (should enter unavailable mode)', () => {
   test('should handle 500 Internal Server Error on /api/user', async ({ page }) => {
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 500,
         contentType: 'application/json',
@@ -132,7 +132,7 @@ test.describe('User Fetch Errors on App Initialization - 5XX (should enter unava
 
   test('should allow browsing app in unavailable mode and persist token across reloads', async ({ page }) => {
     // Mock /user to always return 500
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 500,
         contentType: 'application/json',
@@ -172,7 +172,7 @@ test.describe('User Fetch Errors on App Initialization - 5XX (should enter unava
   });
 
   test('should handle network timeout on /api/user', async ({ page }) => {
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.abort('timedout');
     });
     await page.goto('/');
@@ -189,7 +189,7 @@ test.describe('User Fetch Errors on App Initialization - 5XX (should enter unava
   });
 
   test('should handle network failure on /api/user', async ({ page }) => {
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.abort('connectionrefused');
     });
     await page.goto('/');
@@ -206,7 +206,7 @@ test.describe('User Fetch Errors on App Initialization - 5XX (should enter unava
   });
 
   test('should handle empty response on /api/user', async ({ page }) => {
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -223,7 +223,7 @@ test.describe('User Fetch Errors on App Initialization - 5XX (should enter unava
   });
 
   test('should handle malformed JSON on /api/user', async ({ page }) => {
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -253,7 +253,7 @@ test.describe('User Fetch Errors - Protected Routes', () => {
   });
 
   test('should redirect from /settings on 401', async ({ page }) => {
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 401,
         contentType: 'application/json',
@@ -267,7 +267,7 @@ test.describe('User Fetch Errors - Protected Routes', () => {
   });
 
   test('should redirect from /editor on 401', async ({ page }) => {
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 401,
         contentType: 'application/json',
@@ -281,7 +281,7 @@ test.describe('User Fetch Errors - Protected Routes', () => {
   });
 
   test('should handle 500 on loading /settings gracefully', async ({ page }) => {
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 500,
         contentType: 'application/json',
@@ -294,7 +294,7 @@ test.describe('User Fetch Errors - Protected Routes', () => {
   });
 
   test('should handle network error on /settings gracefully', async ({ page }) => {
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.abort('internetdisconnected');
     });
     await page.goto('/settings');

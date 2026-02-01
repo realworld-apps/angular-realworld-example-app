@@ -5,13 +5,7 @@ const API_BASE = 'https://api.realworld.show/api';
 /**
  * Helper to mock an API endpoint with a specific error response
  */
-async function mockApiError(
-  page: Page,
-  endpoint: string,
-  status: number,
-  errorBody: object = {},
-  method?: string
-) {
+async function mockApiError(page: Page, endpoint: string, status: number, errorBody: object = {}, method?: string) {
   await page.route(`${API_BASE}${endpoint}`, (route: Route) => {
     if (method && route.request().method() !== method) {
       return route.continue();
@@ -70,7 +64,7 @@ test.describe('Error Handling - 400 Bad Request', () => {
     await page.goto('/');
     await setFakeAuthToken(page);
     // Mock successful user fetch (so we appear logged in)
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -79,9 +73,15 @@ test.describe('Error Handling - 400 Bad Request', () => {
         }),
       });
     });
-    await mockApiError(page, '/articles', 400, {
-      errors: { title: ["can't be blank"], body: ["can't be blank"] },
-    }, 'POST');
+    await mockApiError(
+      page,
+      '/articles',
+      400,
+      {
+        errors: { title: ["can't be blank"], body: ["can't be blank"] },
+      },
+      'POST',
+    );
     await page.goto('/editor');
     await page.fill('input[formControlName="title"]', '');
     await page.fill('input[formControlName="description"]', 'desc');
@@ -99,7 +99,7 @@ test.describe('Error Handling - 401 Unauthorized', () => {
   test('should handle 401 when submitting settings form', async ({ page }) => {
     // Mock GET /user to succeed (so we can load the settings page)
     // Mock PUT /user to return 401 (session expired mid-edit)
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       if (route.request().method() === 'GET') {
         route.fulfill({
           status: 200,
@@ -130,7 +130,7 @@ test.describe('Error Handling - 401 Unauthorized', () => {
 
   test('should handle 401 when posting a comment', async ({ page }) => {
     // Mock article fetch as successful
-    await page.route(`${API_BASE}/articles/*`, (route) => {
+    await page.route(`${API_BASE}/articles/*`, route => {
       if (route.request().method() === 'GET') {
         route.fulfill({
           status: 200,
@@ -155,7 +155,7 @@ test.describe('Error Handling - 401 Unauthorized', () => {
       }
     });
     // Mock comments fetch
-    await page.route(`${API_BASE}/articles/*/comments`, (route) => {
+    await page.route(`${API_BASE}/articles/*/comments`, route => {
       if (route.request().method() === 'GET') {
         route.fulfill({
           status: 200,
@@ -173,7 +173,7 @@ test.describe('Error Handling - 401 Unauthorized', () => {
     await page.goto('/');
     await setFakeAuthToken(page);
     // Mock user as logged in
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -205,7 +205,7 @@ test.describe('Error Handling - 403 Forbidden', () => {
       author: { username: 'currentuser', bio: '', image: '', following: false },
     };
     // Mock user fetch
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -215,7 +215,7 @@ test.describe('Error Handling - 403 Forbidden', () => {
       });
     });
     // Mock article fetch (GET) and update (PUT with 403)
-    await page.route(`${API_BASE}/articles/test-article`, (route) => {
+    await page.route(`${API_BASE}/articles/test-article`, route => {
       if (route.request().method() === 'GET') {
         route.fulfill({
           status: 200,
@@ -265,7 +265,7 @@ test.describe('Error Handling - 403 Forbidden', () => {
       author: { username: 'currentuser', bio: '', image: '', following: false },
     };
     // Mock user fetch
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -275,7 +275,7 @@ test.describe('Error Handling - 403 Forbidden', () => {
       });
     });
     // Mock article fetch
-    await page.route(`${API_BASE}/articles/test-article`, (route) => {
+    await page.route(`${API_BASE}/articles/test-article`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -283,14 +283,14 @@ test.describe('Error Handling - 403 Forbidden', () => {
       });
     });
     // Mock comments fetch (GET) and delete (DELETE with 403)
-    await page.route(`${API_BASE}/articles/test-article/comments`, (route) => {
+    await page.route(`${API_BASE}/articles/test-article/comments`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({ comments: [mockComment] }),
       });
     });
-    await page.route(`${API_BASE}/articles/test-article/comments/1`, (route) => {
+    await page.route(`${API_BASE}/articles/test-article/comments/1`, route => {
       if (route.request().method() === 'DELETE') {
         route.fulfill({
           status: 403,
@@ -324,7 +324,7 @@ test.describe('Error Handling - 403 Forbidden', () => {
       following: false,
     };
     // Mock user fetch
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -334,7 +334,7 @@ test.describe('Error Handling - 403 Forbidden', () => {
       });
     });
     // Mock profile fetch
-    await page.route(`${API_BASE}/profiles/blockeduser`, (route) => {
+    await page.route(`${API_BASE}/profiles/blockeduser`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -342,7 +342,7 @@ test.describe('Error Handling - 403 Forbidden', () => {
       });
     });
     // Mock articles for profile
-    await page.route(`${API_BASE}/articles?author=blockeduser*`, (route) => {
+    await page.route(`${API_BASE}/articles?author=blockeduser*`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -350,7 +350,7 @@ test.describe('Error Handling - 403 Forbidden', () => {
       });
     });
     // Mock follow with 403
-    await page.route(`${API_BASE}/profiles/blockeduser/follow`, (route) => {
+    await page.route(`${API_BASE}/profiles/blockeduser/follow`, route => {
       route.fulfill({
         status: 403,
         contentType: 'application/json',
@@ -384,7 +384,7 @@ test.describe('Error Handling - 500 Internal Server Error', () => {
 
   test('should handle 500 on tags load', async ({ page }) => {
     // Mock articles as successful
-    await page.route(`${API_BASE}/articles*`, (route) => {
+    await page.route(`${API_BASE}/articles*`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -403,14 +403,14 @@ test.describe('Error Handling - 500 Internal Server Error', () => {
   });
 
   test('should handle network error on tags load', async ({ page }) => {
-    await page.route(`${API_BASE}/articles*`, (route) => {
+    await page.route(`${API_BASE}/articles*`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({ articles: [], articlesCount: 0 }),
       });
     });
-    await page.route(`${API_BASE}/tags`, (route) => {
+    await page.route(`${API_BASE}/tags`, route => {
       route.abort('internetdisconnected');
     });
     await page.goto('/');
@@ -433,7 +433,7 @@ test.describe('Error Handling - 500 Internal Server Error', () => {
   });
 
   test('should handle network error on user profile load', async ({ page }) => {
-    await page.route(`${API_BASE}/profiles/*`, (route) => {
+    await page.route(`${API_BASE}/profiles/*`, route => {
       route.abort('internetdisconnected');
     });
     await page.goto('/profile/someuser');
@@ -455,7 +455,7 @@ test.describe('Error Handling - 500 Internal Server Error', () => {
   });
 
   test('should handle network error on article detail load', async ({ page }) => {
-    await page.route(`${API_BASE}/articles/some-article`, (route) => {
+    await page.route(`${API_BASE}/articles/some-article`, route => {
       route.abort('internetdisconnected');
     });
     await page.goto('/article/some-article');
@@ -467,7 +467,7 @@ test.describe('Error Handling - 500 Internal Server Error', () => {
 
   test('should handle 500 when submitting settings', async ({ page }) => {
     // Mock user fetch as successful
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       if (route.request().method() === 'GET') {
         route.fulfill({
           status: 200,
@@ -500,7 +500,7 @@ test.describe('Error Handling - 500 Internal Server Error', () => {
   test('should handle intermittent 500 errors gracefully', async ({ page }) => {
     let requestCount = 0;
     // First request fails, second succeeds
-    await page.route(`${API_BASE}/articles*`, (route) => {
+    await page.route(`${API_BASE}/articles*`, route => {
       requestCount++;
       if (requestCount === 1) {
         route.fulfill({
@@ -525,7 +525,7 @@ test.describe('Error Handling - 500 Internal Server Error', () => {
 
 test.describe('Error Handling - Network Errors', () => {
   test('should handle network timeout', async ({ page }) => {
-    await page.route(`${API_BASE}/articles*`, (route) => {
+    await page.route(`${API_BASE}/articles*`, route => {
       // Simulate timeout by not responding
       route.abort('timedout');
     });
@@ -536,7 +536,7 @@ test.describe('Error Handling - Network Errors', () => {
   });
 
   test('should handle connection refused', async ({ page }) => {
-    await page.route(`${API_BASE}/articles*`, (route) => {
+    await page.route(`${API_BASE}/articles*`, route => {
       route.abort('connectionrefused');
     });
     await page.goto('/');
@@ -547,7 +547,7 @@ test.describe('Error Handling - Network Errors', () => {
 
   test('should show error message on settings form when network fails', async ({ page }) => {
     // Mock GET /user to simulate logged-in state
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       if (route.request().method() === 'GET') {
         route.fulfill({
           status: 200,
@@ -586,7 +586,7 @@ test.describe('Error Handling - Network Errors', () => {
   });
 
   test('should show error message on login form when network fails', async ({ page }) => {
-    await page.route(`${API_BASE}/users/login`, (route) => {
+    await page.route(`${API_BASE}/users/login`, route => {
       route.abort('internetdisconnected');
     });
     await page.goto('/login');
@@ -600,7 +600,7 @@ test.describe('Error Handling - Network Errors', () => {
   });
 
   test('should show error message on register form when network fails', async ({ page }) => {
-    await page.route(`${API_BASE}/users`, (route) => {
+    await page.route(`${API_BASE}/users`, route => {
       route.abort('internetdisconnected');
     });
     await page.goto('/register');
@@ -616,7 +616,7 @@ test.describe('Error Handling - Network Errors', () => {
 
   test('should show error message on create article form when network fails', async ({ page }) => {
     // Mock logged-in state
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -626,7 +626,7 @@ test.describe('Error Handling - Network Errors', () => {
       });
     });
     // Network error on article creation
-    await page.route(`${API_BASE}/articles/`, (route) => {
+    await page.route(`${API_BASE}/articles/`, route => {
       route.abort('internetdisconnected');
     });
     await page.goto('/');
@@ -656,7 +656,7 @@ test.describe('Error Handling - Network Errors', () => {
       author: { username: 'testuser', bio: '', image: '', following: false },
     };
     // Mock logged-in state
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -666,7 +666,7 @@ test.describe('Error Handling - Network Errors', () => {
       });
     });
     // Mock article fetch
-    await page.route(`${API_BASE}/articles/test-article`, (route) => {
+    await page.route(`${API_BASE}/articles/test-article`, route => {
       if (route.request().method() === 'GET') {
         route.fulfill({
           status: 200,
@@ -704,7 +704,7 @@ test.describe('Error Handling - Network Errors', () => {
       author: { username: 'otheruser', bio: '', image: '', following: false },
     };
     // Mock logged-in state
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -714,7 +714,7 @@ test.describe('Error Handling - Network Errors', () => {
       });
     });
     // Mock article fetch
-    await page.route(`${API_BASE}/articles/test-article`, (route) => {
+    await page.route(`${API_BASE}/articles/test-article`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -722,7 +722,7 @@ test.describe('Error Handling - Network Errors', () => {
       });
     });
     // Mock comments fetch (empty) and POST (network error)
-    await page.route(`${API_BASE}/articles/test-article/comments`, (route) => {
+    await page.route(`${API_BASE}/articles/test-article/comments`, route => {
       if (route.request().method() === 'GET') {
         route.fulfill({
           status: 200,
@@ -760,7 +760,7 @@ test.describe('Error Handling - Network Errors', () => {
       author: { username: 'otheruser', bio: '', image: '', following: false },
     };
     // Mock logged-in state
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -770,7 +770,7 @@ test.describe('Error Handling - Network Errors', () => {
       });
     });
     // Mock article fetch
-    await page.route(`${API_BASE}/articles/test-article`, (route) => {
+    await page.route(`${API_BASE}/articles/test-article`, route => {
       if (route.request().method() === 'GET') {
         route.fulfill({
           status: 200,
@@ -782,7 +782,7 @@ test.describe('Error Handling - Network Errors', () => {
       }
     });
     // Mock comments
-    await page.route(`${API_BASE}/articles/test-article/comments`, (route) => {
+    await page.route(`${API_BASE}/articles/test-article/comments`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -790,7 +790,7 @@ test.describe('Error Handling - Network Errors', () => {
       });
     });
     // Network error on favorite
-    await page.route(`${API_BASE}/articles/test-article/favorite`, (route) => {
+    await page.route(`${API_BASE}/articles/test-article/favorite`, route => {
       route.abort('internetdisconnected');
     });
     await page.goto('/');
@@ -812,7 +812,7 @@ test.describe('Error Handling - Network Errors', () => {
       following: false,
     };
     // Mock logged-in state
-    await page.route(`${API_BASE}/user`, (route) => {
+    await page.route(`${API_BASE}/user`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -822,7 +822,7 @@ test.describe('Error Handling - Network Errors', () => {
       });
     });
     // Mock profile fetch
-    await page.route(`${API_BASE}/profiles/otheruser`, (route) => {
+    await page.route(`${API_BASE}/profiles/otheruser`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -830,7 +830,7 @@ test.describe('Error Handling - Network Errors', () => {
       });
     });
     // Mock articles for profile
-    await page.route(`${API_BASE}/articles?author=otheruser*`, (route) => {
+    await page.route(`${API_BASE}/articles?author=otheruser*`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -838,7 +838,7 @@ test.describe('Error Handling - Network Errors', () => {
       });
     });
     // Network error on follow
-    await page.route(`${API_BASE}/profiles/otheruser/follow`, (route) => {
+    await page.route(`${API_BASE}/profiles/otheruser/follow`, route => {
       route.abort('internetdisconnected');
     });
     await page.goto('/');
@@ -855,7 +855,7 @@ test.describe('Error Handling - Network Errors', () => {
 
 test.describe('Error Handling - Edge Cases', () => {
   test('should handle malformed JSON response', async ({ page }) => {
-    await page.route(`${API_BASE}/articles*`, (route) => {
+    await page.route(`${API_BASE}/articles*`, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -869,7 +869,7 @@ test.describe('Error Handling - Edge Cases', () => {
   });
 
   test('should handle empty response body', async ({ page }) => {
-    await page.route(`${API_BASE}/articles*`, (route) => {
+    await page.route(`${API_BASE}/articles*`, route => {
       route.fulfill({
         status: 204, // No Content is more appropriate for empty body
         contentType: 'application/json',
