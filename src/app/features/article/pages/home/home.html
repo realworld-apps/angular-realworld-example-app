@@ -1,0 +1,67 @@
+<div class="home-page">
+  <div class="banner" *ifAuthenticated="false">
+    <div class="container">
+      <h1 class="logo-font">conduit</h1>
+      <p>A place to share your <i>Angular</i> knowledge.</p>
+    </div>
+  </div>
+
+  <div class="container page">
+    <div class="row">
+      <div class="col-md-9">
+        <div class="feed-toggle">
+          <ul class="nav nav-pills outline-active">
+            <li class="nav-item" *ifAuthenticated="true">
+              <a
+                class="nav-link"
+                [ngClass]="{ active: listConfig().type === 'feed' }"
+                routerLink="/"
+                [queryParams]="{ feed: 'following' }"
+              >
+                Your Feed
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                [ngClass]="{
+                  active: listConfig().type === 'all' && !listConfig().filters.tag,
+                }"
+                routerLink="/"
+              >
+                Global Feed
+              </a>
+            </li>
+            <li class="nav-item" [hidden]="!listConfig().filters.tag">
+              <a class="nav-link active"> <i class="ion-pound"></i> {{ listConfig().filters.tag }} </a>
+            </li>
+          </ul>
+        </div>
+
+        <app-article-list
+          [limit]="10"
+          [config]="listConfig()"
+          [currentPage]="currentPage()"
+          [isFollowingFeed]="isFollowingFeed()"
+          (pageChange)="onPageChange($event)"
+        />
+      </div>
+
+      <div class="col-md-3" *rxLet="tags$; let tags">
+        <div class="sidebar">
+          <p>Popular Tags</p>
+
+          <div class="tag-list">
+            @for (tag of tags; track tag) {
+            <a class="tag-default tag-pill" [routerLink]="['/tag', tag]"> {{ tag }} </a>
+            }
+          </div>
+
+          <div [hidden]="tagsLoaded()">Loading tags...</div>
+
+          <div [hidden]="!tagsLoaded() || tags.length > 0">No tags are here... yet.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

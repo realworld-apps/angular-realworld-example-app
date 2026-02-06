@@ -1,0 +1,124 @@
+<div class="article-page">
+  @if (errors()) {
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <app-list-errors [errors]="errors()" />
+      </div>
+    </div>
+  </div>
+  } @if (article(); as a) {
+  <div class="banner">
+    <div class="container">
+      <h1>{{ a.title }}</h1>
+
+      <app-article-meta [article]="a">
+        @if (canModify()) {
+        <span>
+          <a class="btn btn-sm btn-outline-secondary" [routerLink]="['/editor', a.slug]">
+            <i class="ion-edit"></i> Edit Article
+          </a>
+
+          <button
+            class="btn btn-sm btn-outline-danger"
+            [ngClass]="{ disabled: isDeleting() }"
+            (click)="deleteArticle()"
+          >
+            <i class="ion-trash-a"></i> Delete Article
+          </button>
+        </span>
+        } @else {
+        <span>
+          <app-follow-button [profile]="a.author" (toggle)="toggleFollowing($event)"> </app-follow-button>
+
+          <app-favorite-button [article]="a" (toggle)="onToggleFavorite($event)">
+            {{ a.favorited ? 'Unfavorite' : 'Favorite' }} Article
+            <span class="counter">({{ a.favoritesCount }})</span>
+          </app-favorite-button>
+        </span>
+        }
+      </app-article-meta>
+    </div>
+  </div>
+
+  <div class="container page">
+    <div class="row article-content">
+      <div class="col-md-12">
+        <div [innerHTML]="a.body | markdown | async"></div>
+
+        <ul class="tag-list">
+          @for (tag of a.tagList; track tag) {
+          <li class="tag-default tag-pill tag-outline">{{ tag }}</li>
+          }
+        </ul>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="article-actions">
+      <app-article-meta [article]="a">
+        @if (canModify()) {
+        <span>
+          <a class="btn btn-sm btn-outline-secondary" [routerLink]="['/editor', a.slug]">
+            <i class="ion-edit"></i> Edit Article
+          </a>
+
+          <button
+            class="btn btn-sm btn-outline-danger"
+            [ngClass]="{ disabled: isDeleting() }"
+            (click)="deleteArticle()"
+          >
+            <i class="ion-trash-a"></i> Delete Article
+          </button>
+        </span>
+        } @else {
+        <span>
+          <app-follow-button [profile]="a.author" (toggle)="toggleFollowing($event)" />
+
+          <app-favorite-button [article]="a" (toggle)="onToggleFavorite($event)">
+            {{ a.favorited ? 'Unfavorite' : 'Favorite' }} Article
+            <span class="counter">({{ a.favoritesCount }})</span>
+          </app-favorite-button>
+        </span>
+        }
+      </app-article-meta>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-md-8 offset-md-2">
+        <div *ifAuthenticated="true">
+          <app-list-errors [errors]="commentFormErrors()" />
+          <form class="card comment-form" (ngSubmit)="addComment()">
+            <fieldset [disabled]="isSubmitting()">
+              <div class="card-block">
+                <textarea
+                  class="form-control"
+                  placeholder="Write a comment..."
+                  rows="3"
+                  [formControl]="commentControl"
+                ></textarea>
+              </div>
+              <div class="card-footer">
+                <img [src]="currentUser()?.image === null ? '' : currentUser()?.image" class="comment-author-img" />
+                <button class="btn btn-sm btn-primary" type="submit">Post Comment</button>
+              </div>
+            </fieldset>
+          </form>
+        </div>
+
+        <div *ifAuthenticated="false">
+          <a [routerLink]="['/login']">Sign in</a> or <a [routerLink]="['/register']">sign up</a> to add comments on
+          this article.
+        </div>
+
+        <app-list-errors [errors]="deleteCommentErrors()" />
+
+        @for (comment of comments(); track comment) {
+        <app-article-comment [comment]="comment" (delete)="deleteComment(comment)" />
+        }
+      </div>
+    </div>
+  </div>
+  }
+</div>

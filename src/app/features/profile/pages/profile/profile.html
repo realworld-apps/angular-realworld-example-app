@@ -1,0 +1,63 @@
+<div class="profile-page">
+  @if (errors()) {
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-md-10 offset-md-1">
+        <app-list-errors [errors]="errors()" />
+      </div>
+    </div>
+  </div>
+  } @if (profile(); as p) {
+  <div class="user-info">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 col-md-10 offset-md-1">
+          <img [src]="p.image" class="user-img" />
+          <h4>{{ p.username }}</h4>
+          <p>{{ p.bio }}</p>
+          @if (!isUser()) {
+          <app-follow-button [profile]="p" (toggle)="onToggleFollowing($event)" />
+          } @if (isUser()) {
+          <a [routerLink]="['/settings']" class="btn btn-sm btn-outline-secondary action-btn">
+            <i class="ion-gear-a"></i> Edit Profile Settings
+          </a>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-md-10 offset-md-1">
+        <div class="articles-toggle">
+          <ul class="nav nav-pills outline-active">
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                [routerLink]="['/profile', p.username]"
+              >
+                My Posts
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                [routerLink]="['/profile', p.username, 'favorites']"
+              >
+                Favorited Posts
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+  }
+</div>
