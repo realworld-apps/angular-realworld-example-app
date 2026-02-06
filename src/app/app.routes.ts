@@ -1,6 +1,6 @@
 import { Router, Routes } from '@angular/router';
 import { inject } from '@angular/core';
-import { UserService } from './core/auth/services/user.service';
+import { User } from './core/auth/services/user';
 import { map } from 'rxjs/operators';
 
 /**
@@ -8,31 +8,31 @@ import { map } from 'rxjs/operators';
  */
 const requireAuth = () => {
   const router = inject(Router);
-  return inject(UserService).isAuthenticated.pipe(map(isAuth => isAuth || router.createUrlTree(['/login'])));
+  return inject(User).isAuthenticated.pipe(map(isAuth => isAuth || router.createUrlTree(['/login'])));
 };
 
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./features/article/pages/home/home.component'),
+    loadComponent: () => import('./features/article/pages/home/home'),
   },
   {
     path: 'tag/:tag',
-    loadComponent: () => import('./features/article/pages/home/home.component'),
+    loadComponent: () => import('./features/article/pages/home/home'),
   },
   {
     path: 'login',
-    loadComponent: () => import('./core/auth/auth.component'),
-    canActivate: [() => inject(UserService).isAuthenticated.pipe(map(isAuth => !isAuth))],
+    loadComponent: () => import('./core/auth/auth'),
+    canActivate: [() => inject(User).isAuthenticated.pipe(map(isAuth => !isAuth))],
   },
   {
     path: 'register',
-    loadComponent: () => import('./core/auth/auth.component'),
-    canActivate: [() => inject(UserService).isAuthenticated.pipe(map(isAuth => !isAuth))],
+    loadComponent: () => import('./core/auth/auth'),
+    canActivate: [() => inject(User).isAuthenticated.pipe(map(isAuth => !isAuth))],
   },
   {
     path: 'settings',
-    loadComponent: () => import('./features/settings/settings.component'),
+    loadComponent: () => import('./features/settings/settings'),
     canActivate: [requireAuth],
   },
   {
@@ -44,18 +44,18 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        loadComponent: () => import('./features/article/pages/editor/editor.component'),
+        loadComponent: () => import('./features/article/pages/editor/editor'),
         canActivate: [requireAuth],
       },
       {
         path: ':slug',
-        loadComponent: () => import('./features/article/pages/editor/editor.component'),
+        loadComponent: () => import('./features/article/pages/editor/editor'),
         canActivate: [requireAuth],
       },
     ],
   },
   {
     path: 'article/:slug',
-    loadComponent: () => import('./features/article/pages/article/article.component'),
+    loadComponent: () => import('./features/article/pages/article/article'),
   },
 ];

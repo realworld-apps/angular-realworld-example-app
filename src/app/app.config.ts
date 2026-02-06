@@ -3,11 +3,11 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { JwtService } from './core/auth/services/jwt.service';
-import { UserService, AuthState } from './core/auth/services/user.service';
-import { apiInterceptor } from './core/interceptors/api.interceptor';
-import { tokenInterceptor } from './core/interceptors/token.interceptor';
-import { errorInterceptor } from './core/interceptors/error.interceptor';
+import { Jwt } from './core/auth/services/jwt';
+import { User, AuthState } from './core/auth/services/user';
+import { apiInterceptor } from './core/interceptors/api-interceptor';
+import { tokenInterceptor } from './core/interceptors/token-interceptor';
+import { errorInterceptor } from './core/interceptors/error-interceptor';
 import { EMPTY } from 'rxjs';
 import { User } from './core/auth/user.model';
 
@@ -30,7 +30,7 @@ declare global {
 /**
  * Sets up the debug interface on window.__conduit_debug__
  */
-function setupDebugInterface(jwtService: JwtService, userService: UserService): void {
+function setupDebugInterface(jwtService: Jwt, userService: User): void {
   let currentAuthState: AuthState = 'loading';
   let currentUser: User | null = null;
 
@@ -53,7 +53,7 @@ function setupDebugInterface(jwtService: JwtService, userService: UserService): 
  *     - 4XX → 'unauthenticated' (invalid token, cleared)
  *     - 5XX → 'unavailable' (server down, token kept, auto-retry)
  */
-export function initAuth(jwtService: JwtService, userService: UserService) {
+export function initAuth(jwtService: Jwt, userService: User) {
   return () => {
     setupDebugInterface(jwtService, userService);
 
@@ -72,7 +72,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withInterceptors([apiInterceptor, tokenInterceptor, errorInterceptor])),
     provideAppInitializer(() => {
-      const initializerFn = initAuth(inject(JwtService), inject(UserService));
+      const initializerFn = initAuth(inject(Jwt), inject(User));
       return initializerFn();
     }),
   ],
