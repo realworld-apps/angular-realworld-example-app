@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { Jwt } from './core/auth/services/jwt';
-import { User, AuthState } from './core/auth/services/user';
+import { UserAuth, AuthState } from './core/auth/services/user-auth';
 import { apiInterceptor } from './core/interceptors/api-interceptor';
 import { tokenInterceptor } from './core/interceptors/token-interceptor';
 import { errorInterceptor } from './core/interceptors/error-interceptor';
@@ -30,7 +30,7 @@ declare global {
 /**
  * Sets up the debug interface on window.__conduit_debug__
  */
-function setupDebugInterface(jwtService: Jwt, userService: User): void {
+function setupDebugInterface(jwtService: Jwt, userService: UserAuth): void {
   let currentAuthState: AuthState = 'loading';
   let currentUser: User | null = null;
 
@@ -53,7 +53,7 @@ function setupDebugInterface(jwtService: Jwt, userService: User): void {
  *     - 4XX → 'unauthenticated' (invalid token, cleared)
  *     - 5XX → 'unavailable' (server down, token kept, auto-retry)
  */
-export function initAuth(jwtService: Jwt, userService: User) {
+export function initAuth(jwtService: Jwt, userService: UserAuth) {
   return () => {
     setupDebugInterface(jwtService, userService);
 
@@ -72,7 +72,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withInterceptors([apiInterceptor, tokenInterceptor, errorInterceptor])),
     provideAppInitializer(() => {
-      const initializerFn = initAuth(inject(Jwt), inject(User));
+      const initializerFn = initAuth(inject(Jwt), inject(UserAuth));
       return initializerFn();
     }),
   ],

@@ -6,16 +6,16 @@ import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@ang
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { User } from './user';
+import { UserAuth } from './user-auth';
 import { Jwt } from './jwt';
 import { User } from '../user.model';
 
-describe('User', () => {
+describe('UserAuth', () => {
   beforeAll(() => {
     getTestBed().initTestEnvironment(BrowserDynamicTestingModule, platformBrowserDynamicTesting());
   });
 
-  let service: User;
+  let service: UserAuth;
   let httpMock: HttpTestingController;
   let jwtService: any;
   let router: any;
@@ -40,10 +40,10 @@ describe('User', () => {
 
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [User, { provide: Jwt, useValue: jwtService }, { provide: Router, useValue: router }],
+      providers: [UserAuth, { provide: Jwt, useValue: jwtService }, { provide: Router, useValue: router }],
     });
 
-    service = TestBed.inject(User);
+    service = TestBed.inject(UserAuth);
     httpMock = TestBed.inject(HttpTestingController);
   });
 

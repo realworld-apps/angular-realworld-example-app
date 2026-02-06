@@ -1,5 +1,5 @@
 import { DestroyRef, Directive, inject, Input, OnInit, signal, TemplateRef, ViewContainerRef } from '@angular/core';
-import { User } from './services/user';
+import { UserAuth } from './services/user-auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Directive({
@@ -10,7 +10,7 @@ export class IfAuthenticated<T> implements OnInit {
   destroyRef = inject(DestroyRef);
   constructor(
     private templateRef: TemplateRef<T>,
-    private userService: User,
+    private userService: UserAuth,
     private viewContainer: ViewContainerRef,
   ) {}
 

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal 
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { User } from '../../core/auth/user.model';
-import { User } from '../../core/auth/services/user';
+import { UserAuth } from '../../core/auth/services/user-auth';
 import { ListErrors } from '../../shared/components/list-errors';
 import { Errors } from '../../core/models/errors.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -39,7 +39,7 @@ export default class Settings implements OnInit {
 
   constructor(
     private readonly router: Router,
-    private readonly userService: User,
+    private readonly userService: UserAuth,
   ) {}
 
   ngOnInit(): void {

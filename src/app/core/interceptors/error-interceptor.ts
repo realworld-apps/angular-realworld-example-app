@@ -2,7 +2,7 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { User } from '../auth/services/user';
+import { UserAuth } from '../auth/services/user-auth';
 
 /**
  * Global HTTP error interceptor.
@@ -30,7 +30,7 @@ import { User } from '../auth/services/user';
  * - Network errors get a user-friendly fallback message
  */
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  const userService = inject(User);
+  const userAuth = inject(UserAuth);
 
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {
@@ -38,7 +38,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       // (token expired mid-session → logout)
       // /user is handled by User.getCurrentUser() with 4XX vs 5XX logic
       if (err.status === 401 && !req.url.endsWith('/user')) {
-        userService.purgeAuth();
+        userAuth.purgeAuth();
       }
 
       // Normalize error format: { errors: {...}, status: number }

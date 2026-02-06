@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { Articles } from '../services/articles';
 import { ArticleListConfig } from '../models/article-list-config.model';
-import { Article } from '../models/article.model';
+import { ArticleModel } from '../models/article-model';
 import { ArticlePreview } from './article-preview';
 import { NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -63,7 +63,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class ArticleList implements OnChanges {
   query!: ArticleListConfig;
-  results = signal<Article[]>([]);
+  results = signal<ArticleModel[]>([]);
   page = signal(1);
   totalPages = signal<number[]>([]);
   loading = signal(LoadingState.NOT_LOADED);

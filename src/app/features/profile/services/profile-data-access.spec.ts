@@ -5,18 +5,18 @@ import { TestBed, getTestBed } from '@angular/core/testing';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { firstValueFrom } from 'rxjs';
-import { Profile } from './profile';
-import { Profile } from '../models/profile.model';
+import { ProfileDataAccess } from './profile-data-access';
+import { ProfileModel } from '../models/profile-model';
 
-describe('Profile', () => {
+describe('ProfileDataAccess', () => {
   beforeAll(() => {
     getTestBed().initTestEnvironment(BrowserDynamicTestingModule, platformBrowserDynamicTesting());
   });
 
-  let service: Profile;
+  let service: ProfileDataAccess;
   let httpMock: HttpTestingController;
 
-  const mockProfile: Profile = {
+  const mockProfile: ProfileModel = {
     username: 'testuser',
     bio: 'Test bio',
     image: 'https://example.com/avatar.jpg',
@@ -26,10 +26,10 @@ describe('Profile', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [Profile],
+      providers: [ProfileDataAccess],
     });
 
-    service = TestBed.inject(Profile);
+    service = TestBed.inject(ProfileDataAccess);
     httpMock = TestBed.inject(HttpTestingController);
   });
 

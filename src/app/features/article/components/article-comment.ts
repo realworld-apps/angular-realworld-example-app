@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
-import { User } from '../../../core/auth/services/user';
+import { UserAuth } from '../../../core/auth/services/user-auth';
 import { User } from '../../../core/auth/user.model';
 import { RouterLink } from '@angular/router';
 import { map } from 'rxjs/operators';
@@ -43,7 +43,7 @@ export class ArticleComment {
   @Input() comment!: Comment;
   @Output() delete = new EventEmitter<boolean>();
 
-  canModify$ = inject(User).currentUser.pipe(
+  canModify$ = inject(UserAuth).currentUser.pipe(
     map((userData: User | null) => userData?.username === this.comment.author.username),
   );
 }

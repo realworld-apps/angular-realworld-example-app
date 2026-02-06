@@ -1,6 +1,6 @@
 import { Router, Routes } from '@angular/router';
 import { inject } from '@angular/core';
-import { User } from './core/auth/services/user';
+import { UserAuth } from './core/auth/services/user-auth';
 import { map } from 'rxjs/operators';
 
 /**
@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
  */
 const requireAuth = () => {
   const router = inject(Router);
-  return inject(User).isAuthenticated.pipe(map(isAuth => isAuth || router.createUrlTree(['/login'])));
+  return inject(UserAuth).isAuthenticated.pipe(map(isAuth => isAuth || router.createUrlTree(['/login'])));
 };
 
 export const routes: Routes = [
@@ -23,12 +23,12 @@ export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () => import('./core/auth/auth'),
-    canActivate: [() => inject(User).isAuthenticated.pipe(map(isAuth => !isAuth))],
+    canActivate: [() => inject(UserAuth).isAuthenticated.pipe(map(isAuth => !isAuth))],
   },
   {
     path: 'register',
     loadComponent: () => import('./core/auth/auth'),
-    canActivate: [() => inject(User).isAuthenticated.pipe(map(isAuth => !isAuth))],
+    canActivate: [() => inject(UserAuth).isAuthenticated.pipe(map(isAuth => !isAuth))],
   },
   {
     path: 'settings',

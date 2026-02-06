@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal 
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { catchError, switchMap } from 'rxjs/operators';
 import { combineLatest, EMPTY, of } from 'rxjs';
-import { User } from '../../../../core/auth/services/user';
-import { Profile } from '../../models/profile.model';
-import { Profile } from '../../services/profile';
+import { UserAuth } from '../../../../core/auth/services/user-auth';
+import { ProfileModel } from '../../models/profile-model';
+import { ProfileDataAccess } from '../../services/profile-data-access';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FollowButton } from '../../components/follow-button';
 import { Errors } from '../../../../core/models/errors.model';
@@ -17,7 +17,7 @@ import { ListErrors } from '../../../../shared/components/list-errors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Profile implements OnInit {
-  profile = signal<Profile | null>(null);
+  profile = signal<ProfileModel | null>(null);
   isUser = signal(false);
   errors = signal<Errors | null>(null);
   destroyRef = inject(DestroyRef);
@@ -25,8 +25,8 @@ export class Profile implements OnInit {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
-    private readonly userService: User,
-    private readonly profileService: Profile,
+    private readonly userService: UserAuth,
+    private readonly profileService: ProfileDataAccess,
   ) {}
 
   ngOnInit() {
@@ -48,7 +48,7 @@ export class Profile implements OnInit {
       });
   }
 
-  onToggleFollowing(profile: Profile) {
+  onToggleFollowing(profile: ProfileModel) {
     this.profile.set(profile);
   }
 }

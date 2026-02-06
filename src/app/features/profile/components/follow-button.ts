@@ -11,9 +11,9 @@ import {
 import { Router } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
-import { Profile } from '../services/profile';
-import { User } from '../../../core/auth/services/user';
-import { Profile } from '../models/profile.model';
+import { ProfileDataAccess } from '../services/profile-data-access';
+import { UserAuth } from '../../../core/auth/services/user-auth';
+import { ProfileModel } from '../models/profile-model';
 import { NgClass } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -38,15 +38,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FollowButton {
-  @Input() profile!: Profile;
-  @Output() toggle = new EventEmitter<Profile>();
+  @Input() profile!: ProfileModel;
+  @Output() toggle = new EventEmitter<ProfileModel>();
   isSubmitting = signal(false);
   destroyRef = inject(DestroyRef);
 
   constructor(
-    private readonly profileService: Profile,
+    private readonly profileService: ProfileDataAccess,
     private readonly router: Router,
-    private readonly userService: User,
+    private readonly userService: UserAuth,
   ) {}
 
   toggleFollowing(): void {

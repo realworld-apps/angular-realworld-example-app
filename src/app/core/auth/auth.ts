@@ -3,7 +3,7 @@ import { Validators, FormGroup, FormControl, ReactiveFormsModule } from '@angula
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ListErrors } from '../../shared/components/list-errors';
 import { Errors } from '../models/errors.model';
-import { User } from './services/user';
+import { UserAuth } from './services/user-auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface AuthForm {
@@ -29,7 +29,7 @@ export default class Auth implements OnInit {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
-    private readonly userService: User,
+    private readonly userService: UserAuth,
   ) {
     this.authForm = new FormGroup<AuthForm>({
       email: new FormControl('', {

@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 export type AuthState = 'authenticated' | 'unauthenticated' | 'unavailable' | 'loading';
 
 /**
- * User - Manages authentication state for the current user.
+ * UserAuth - Manages authentication state for the current user.
  *
  * ## Endpoints
  *
@@ -45,7 +45,7 @@ export type AuthState = 'authenticated' | 'unauthenticated' | 'unavailable' | 'l
  * which calls purgeAuth() - this handles "token expired mid-session" scenarios.
  */
 @Injectable({ providedIn: 'root' })
-export class User {
+export class UserAuth {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser = this.currentUserSubject.asObservable().pipe(distinctUntilChanged());
 

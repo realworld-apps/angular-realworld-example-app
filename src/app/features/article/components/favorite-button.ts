@@ -12,8 +12,8 @@ import { Router } from '@angular/router';
 import { EMPTY, switchMap } from 'rxjs';
 import { NgClass } from '@angular/common';
 import { Articles } from '../services/articles';
-import { User } from '../../../core/auth/services/user';
-import { Article } from '../models/article.model';
+import { UserAuth } from '../../../core/auth/services/user-auth';
+import { ArticleModel } from '../models/article-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -38,13 +38,13 @@ export class FavoriteButton {
   destroyRef = inject(DestroyRef);
   isSubmitting = signal(false);
 
-  @Input() article!: Article;
+  @Input() article!: ArticleModel;
   @Output() toggle = new EventEmitter<boolean>();
 
   constructor(
     private readonly articleService: Articles,
     private readonly router: Router,
-    private readonly userService: User,
+    private readonly userService: UserAuth,
   ) {}
 
   toggleFavorite(): void {

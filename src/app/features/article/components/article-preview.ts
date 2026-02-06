@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, signal } from '@angular/core';
-import { Article } from '../models/article.model';
+import { ArticleModel } from '../models/article-model';
 import { ArticleMeta } from './article-meta';
 import { RouterLink } from '@angular/router';
 
@@ -33,10 +33,10 @@ import { FavoriteButton } from './favorite-button';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArticlePreview {
-  article = signal<Article>(null!);
+  article = signal<ArticleModel>(null!);
 
   @Input({ required: true })
-  set articleInput(value: Article) {
+  set articleInput(value: ArticleModel) {
     this.article.set(value);
   }
 
