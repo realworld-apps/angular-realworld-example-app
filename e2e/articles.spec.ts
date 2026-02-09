@@ -82,6 +82,42 @@ test.describe('Articles', () => {
     await expect(page.locator(`h1:has-text("${article.title}")`)).not.toBeVisible();
   });
 
+  /**
+   * Verifies the frontend handles HTTP 200 for article deletion.
+   *
+   * The RealWorld spec uses 204 No Content for DELETE operations, which is
+   * semantically correct (success with no response body). However, HTTP clients
+   * should accept ANY 2XX status as success per RFC 9110.
+   *
+   * This test mocks a 200 response to verify the frontend doesn't break when
+   * an implementation returns 200 instead of 204. This is good engineering
+   * practice: clients should handle status code classes, not specific codes.
+   */
+  test('should delete an article when server returns 200 instead of 204', async ({ page }) => {
+    const article = generateUniqueArticle();
+
+    await createArticle(page, article);
+
+    // Intercept DELETE requests and respond with 200 instead of 204
+    await page.route('**/api/articles/*', async route => {
+      if (route.request().method() === 'DELETE') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({}),
+        });
+      } else {
+        await route.continue();
+      }
+    });
+
+    // Delete the article
+    await deleteArticle(page);
+
+    // Should be redirected to home (frontend should handle 200 the same as 204)
+    await expect(page).toHaveURL('/');
+  });
+
   test('should favorite an article', async ({ page }) => {
     // Use an existing article from the demo backend (can't favorite own articles)
     // Go to global feed to see all articles

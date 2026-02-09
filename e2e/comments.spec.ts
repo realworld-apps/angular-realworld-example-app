@@ -45,6 +45,42 @@ test.describe('Comments', () => {
     await expect(page.locator(`.card:not(.comment-form) .card-block:has-text("${commentText}")`)).not.toBeVisible();
   });
 
+  /**
+   * Verifies the frontend handles HTTP 200 for comment deletion.
+   *
+   * The RealWorld spec uses 204 No Content for DELETE operations, which is
+   * semantically correct (success with no response body). However, HTTP clients
+   * should accept ANY 2XX status as success per RFC 9110.
+   *
+   * This test mocks a 200 response to verify the frontend doesn't break when
+   * an implementation returns 200 instead of 204. This is good engineering
+   * practice: clients should handle status code classes, not specific codes.
+   */
+  test('should delete comment when server returns 200 instead of 204', async ({ page }) => {
+    const commentText = 'Comment to test 200 status';
+    await addComment(page, commentText);
+    // Comment should be visible
+    await expect(page.locator(`.card:not(.comment-form) .card-block:has-text("${commentText}")`)).toBeVisible();
+
+    // Intercept DELETE requests to comments and respond with 200 instead of 204
+    await page.route('**/api/articles/*/comments/*', async route => {
+      if (route.request().method() === 'DELETE') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({}),
+        });
+      } else {
+        await route.continue();
+      }
+    });
+
+    // Delete the comment
+    await deleteComment(page, commentText);
+    // Comment should no longer be visible (frontend should handle 200 the same as 204)
+    await expect(page.locator(`.card:not(.comment-form) .card-block:has-text("${commentText}")`)).not.toBeVisible();
+  });
+
   test('should display multiple comments', async ({ page }) => {
     const comment1 = 'First comment';
     const comment2 = 'Second comment';
