@@ -9,6 +9,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FollowButtonComponent } from '../../components/follow-button.component';
 import { Errors } from '../../../../core/models/errors.model';
 import { ListErrorsComponent } from '../../../../shared/components/list-errors.component';
+import { DefaultImagePipe } from '../../../../shared/pipes/default-image.pipe';
 
 @Component({
   selector: 'app-profile-page',
@@ -20,6 +21,7 @@ import { ListErrorsComponent } from '../../../../shared/components/list-errors.c
     RouterOutlet,
     FollowButtonComponent,
     ListErrorsComponent,
+    DefaultImagePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

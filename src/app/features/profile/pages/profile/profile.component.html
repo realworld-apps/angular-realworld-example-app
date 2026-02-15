@@ -13,9 +13,9 @@
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-md-10 offset-md-1">
-            <img [src]="p.image" class="user-img" />
+            <img [src]="p.image | defaultImage" class="user-img" />
             <h4>{{ p.username }}</h4>
-            <p>{{ p.bio }}</p>
+            <p>{{ p.bio ?? '' }}</p>
             @if (!isUser()) {
               <app-follow-button [profile]="p" (toggle)="onToggleFollowing($event)" />
             }

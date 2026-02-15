@@ -20,6 +20,7 @@ import { Profile } from '../../../profile/models/profile.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FavoriteButtonComponent } from '../../components/favorite-button.component';
 import { FollowButtonComponent } from '../../../profile/components/follow-button.component';
+import { DefaultImagePipe } from '../../../../shared/pipes/default-image.pipe';
 
 @Component({
   selector: 'app-article-page',
@@ -37,6 +38,7 @@ import { FollowButtonComponent } from '../../../profile/components/follow-button
     ArticleCommentComponent,
     ReactiveFormsModule,
     IfAuthenticatedDirective,
+    DefaultImagePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

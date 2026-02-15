@@ -2,13 +2,14 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Article } from '../models/article.model';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { DefaultImagePipe } from '../../../shared/pipes/default-image.pipe';
 
 @Component({
   selector: 'app-article-meta',
   template: `
     <div class="article-meta">
       <a [routerLink]="['/profile', article.author.username]">
-        <img [src]="article.author.image" />
+        <img [src]="article.author.image | defaultImage" />
       </a>
 
       <div class="info">
@@ -24,7 +25,7 @@ import { DatePipe } from '@angular/common';
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, DatePipe],
+  imports: [RouterLink, DatePipe, DefaultImagePipe],
 })
 export class ArticleMetaComponent {
   @Input() article!: Article;

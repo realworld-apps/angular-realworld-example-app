@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { Comment } from '../models/comment.model';
 import { AsyncPipe, DatePipe } from '@angular/common';
+import { DefaultImagePipe } from '../../../shared/pipes/default-image.pipe';
 
 @Component({
   selector: 'app-article-comment',
@@ -18,7 +19,7 @@ import { AsyncPipe, DatePipe } from '@angular/common';
         </div>
         <div class="card-footer">
           <a class="comment-author" [routerLink]="['/profile', comment.author.username]">
-            <img [src]="comment.author.image" class="comment-author-img" />
+            <img [src]="comment.author.image | defaultImage" class="comment-author-img" />
           </a>
           &nbsp;
           <a class="comment-author" [routerLink]="['/profile', comment.author.username]">
@@ -36,7 +37,7 @@ import { AsyncPipe, DatePipe } from '@angular/common';
       </div>
     }
   `,
-  imports: [RouterLink, DatePipe, AsyncPipe],
+  imports: [RouterLink, DatePipe, AsyncPipe, DefaultImagePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArticleCommentComponent {
