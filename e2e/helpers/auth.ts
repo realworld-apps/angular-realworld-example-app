@@ -2,9 +2,9 @@ import { Page } from '@playwright/test';
 
 export async function register(page: Page, username: string, email: string, password: string) {
   await page.goto('/register', { waitUntil: 'load' });
-  await page.fill('input[formControlName="username"]', username);
-  await page.fill('input[formControlName="email"]', email);
-  await page.fill('input[formControlName="password"]', password);
+  await page.fill('input[name="username"]', username);
+  await page.fill('input[name="email"]', email);
+  await page.fill('input[name="password"]', password);
 
   // Wait for navigation to complete or error to appear
   try {
@@ -24,8 +24,8 @@ export async function register(page: Page, username: string, email: string, pass
 
 export async function login(page: Page, email: string, password: string) {
   await page.goto('/login', { waitUntil: 'load' });
-  await page.fill('input[formControlName="email"]', email);
-  await page.fill('input[formControlName="password"]', password);
+  await page.fill('input[name="email"]', email);
+  await page.fill('input[name="password"]', password);
 
   // Wait for navigation to complete or error to appear
   try {

@@ -33,13 +33,13 @@ test.describe('Error Handling - 400 Bad Request', () => {
       errors: { 'email or password': ['is invalid'] },
     });
     await page.goto('/login');
-    await page.fill('input[formControlName="email"]', 'test@test.com');
-    await page.fill('input[formControlName="password"]', 'password');
+    await page.fill('input[name="email"]', 'test@test.com');
+    await page.fill('input[name="password"]', 'password');
     await page.click('button[type="submit"]');
     // Should show error messages, not crash
     await expect(page.locator('.error-messages')).toBeVisible();
     await expect(page).toHaveURL('/login');
-    await expect(page.locator('input[formControlName="email"]')).toBeVisible();
+    await expect(page.locator('input[name="email"]')).toBeVisible();
   });
 
   test('should handle 400 on registration with validation errors', async ({ page }) => {
@@ -50,14 +50,14 @@ test.describe('Error Handling - 400 Bad Request', () => {
       },
     });
     await page.goto('/register');
-    await page.fill('input[formControlName="username"]', 'ab');
-    await page.fill('input[formControlName="email"]', 'taken@test.com');
-    await page.fill('input[formControlName="password"]', 'password123');
+    await page.fill('input[name="username"]', 'ab');
+    await page.fill('input[name="email"]', 'taken@test.com');
+    await page.fill('input[name="password"]', 'password123');
     await page.click('button[type="submit"]');
     // Should show error messages
     await expect(page.locator('.error-messages')).toBeVisible();
     await expect(page).toHaveURL('/register');
-    await expect(page.locator('input[formControlName="email"]')).toBeVisible();
+    await expect(page.locator('input[name="email"]')).toBeVisible();
   });
 
   test('should handle 400 on article creation', async ({ page }) => {
@@ -83,13 +83,13 @@ test.describe('Error Handling - 400 Bad Request', () => {
       'POST',
     );
     await page.goto('/editor');
-    await page.fill('input[formControlName="title"]', '');
-    await page.fill('input[formControlName="description"]', 'desc');
-    await page.fill('textarea[formControlName="body"]', '');
+    await page.fill('input[name="title"]', '');
+    await page.fill('input[name="description"]', 'desc');
+    await page.fill('textarea[name="body"]', '');
     await page.click('button:has-text("Publish")');
     // Should show errors, not crash
     await expect(page.locator('.error-messages')).toBeVisible();
-    await expect(page.locator('input[formControlName="title"]')).toBeVisible();
+    await expect(page.locator('input[name="title"]')).toBeVisible();
   });
 });
 
@@ -120,12 +120,12 @@ test.describe('Error Handling - 401 Unauthorized', () => {
     await setFakeAuthToken(page);
     await page.goto('/settings');
     // Wait for form to load
-    await expect(page.locator('input[formControlName="email"]')).toBeVisible();
+    await expect(page.locator('input[name="email"]')).toBeVisible();
     // Submit the form
     await page.click('button[type="submit"]');
     // Should show error message, form should still be usable
     await expect(page.locator('.error-messages')).toBeVisible();
-    await expect(page.locator('input[formControlName="email"]')).toBeVisible();
+    await expect(page.locator('input[name="email"]')).toBeVisible();
   });
 
   test('should handle 401 when posting a comment', async ({ page }) => {
@@ -236,12 +236,12 @@ test.describe('Error Handling - 403 Forbidden', () => {
     await setFakeAuthToken(page);
     await page.goto('/editor/test-article');
     // Wait for form to load
-    await expect(page.locator('input[formControlName="title"]')).toHaveValue('Test Article');
+    await expect(page.locator('input[name="title"]')).toHaveValue('Test Article');
     // Try to update
     await page.click('button:has-text("Publish")');
     // Should show error message
     await expect(page.locator('.error-messages')).toBeVisible();
-    await expect(page.locator('input[formControlName="title"]')).toBeVisible();
+    await expect(page.locator('input[name="title"]')).toBeVisible();
   });
 
   test('should handle 403 when deleting another users comment', async ({ page }) => {
@@ -488,13 +488,13 @@ test.describe('Error Handling - 500 Internal Server Error', () => {
     await setFakeAuthToken(page);
     await page.goto('/settings');
     // Wait for form to load
-    await expect(page.locator('input[formControlName="email"]')).toBeVisible();
+    await expect(page.locator('input[name="email"]')).toBeVisible();
     // Try to submit
     await page.click('button[type="submit"]');
     // Should show error, not crash
     await expect(page.locator('nav.navbar')).toBeVisible();
     // Form should still be usable
-    await expect(page.locator('input[formControlName="email"]')).toBeVisible();
+    await expect(page.locator('input[name="email"]')).toBeVisible();
   });
 
   test('should handle intermittent 500 errors gracefully', async ({ page }) => {
@@ -590,8 +590,8 @@ test.describe('Error Handling - Network Errors', () => {
       route.abort('internetdisconnected');
     });
     await page.goto('/login');
-    await page.fill('input[formcontrolname="email"]', 'test@example.com');
-    await page.fill('input[formcontrolname="password"]', 'password123');
+    await page.fill('input[name="email"]', 'test@example.com');
+    await page.fill('input[name="password"]', 'password123');
     await page.click('button[type="submit"]');
     await expect(page.locator('.error-messages')).toBeVisible();
     await expect(page.locator('.error-messages')).toContainText('Unable to connect');
@@ -604,9 +604,9 @@ test.describe('Error Handling - Network Errors', () => {
       route.abort('internetdisconnected');
     });
     await page.goto('/register');
-    await page.fill('input[formcontrolname="username"]', 'testuser');
-    await page.fill('input[formcontrolname="email"]', 'test@example.com');
-    await page.fill('input[formcontrolname="password"]', 'password123');
+    await page.fill('input[name="username"]', 'testuser');
+    await page.fill('input[name="email"]', 'test@example.com');
+    await page.fill('input[name="password"]', 'password123');
     await page.click('button[type="submit"]');
     await expect(page.locator('.error-messages')).toBeVisible();
     await expect(page.locator('.error-messages')).toContainText('Unable to connect');
@@ -632,9 +632,9 @@ test.describe('Error Handling - Network Errors', () => {
     await page.goto('/');
     await page.evaluate(() => localStorage.setItem('jwtToken', 'fake-token'));
     await page.goto('/editor');
-    await page.fill('input[formcontrolname="title"]', 'Test Article');
-    await page.fill('input[formcontrolname="description"]', 'Test description');
-    await page.fill('textarea[formcontrolname="body"]', 'Test body content');
+    await page.fill('input[name="title"]', 'Test Article');
+    await page.fill('input[name="description"]', 'Test description');
+    await page.fill('textarea[name="body"]', 'Test body content');
     await page.click('button:has-text("Publish Article")');
     await expect(page.locator('.error-messages')).toBeVisible();
     await expect(page.locator('.error-messages')).toContainText('Unable to connect');
@@ -682,7 +682,7 @@ test.describe('Error Handling - Network Errors', () => {
     await page.goto('/');
     await page.evaluate(() => localStorage.setItem('jwtToken', 'fake-token'));
     await page.goto('/editor/test-article');
-    await expect(page.locator('input[formcontrolname="title"]')).toHaveValue('Test Article');
+    await expect(page.locator('input[name="title"]')).toHaveValue('Test Article');
     await page.click('button:has-text("Publish Article")');
     await expect(page.locator('.error-messages')).toBeVisible();
     await expect(page.locator('.error-messages')).toContainText('Unable to connect');

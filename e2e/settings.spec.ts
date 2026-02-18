@@ -21,11 +21,11 @@ test.describe('Settings - Profile Updates', () => {
 
     // Go to settings
     await page.goto('/settings');
-    await expect(page.locator('input[formControlName="username"]')).toHaveValue(user.username);
+    await expect(page.locator('input[name="username"]')).toHaveValue(user.username);
 
     // Update bio
     const newBio = `Bio updated at ${Date.now()}`;
-    await page.fill('textarea[formControlName="bio"]', newBio);
+    await page.fill('textarea[name="bio"]', newBio);
 
     // Submit and wait for API response
     const responsePromise = page.waitForResponse(
@@ -60,11 +60,11 @@ test.describe('Settings - Profile Updates', () => {
     await register(page, user.username, user.email, user.password);
 
     await page.goto('/settings');
-    await expect(page.locator('input[formControlName="username"]')).toHaveValue(user.username);
+    await expect(page.locator('input[name="username"]')).toHaveValue(user.username);
 
     // Update image
     const newImage = 'https://api.realworld.io/images/smiley-cyrus.jpeg';
-    await page.fill('input[formControlName="image"]', newImage);
+    await page.fill('input[name="image"]', newImage);
 
     // Submit and wait for API response
     const responsePromise = page.waitForResponse(
@@ -101,8 +101,8 @@ test.describe('Settings - Profile Updates', () => {
     // Update both fields
     const newBio = `Multi-update bio ${Date.now()}`;
     const newImage = 'https://api.realworld.io/images/smiley-cyrus.jpeg';
-    await page.fill('textarea[formControlName="bio"]', newBio);
-    await page.fill('input[formControlName="image"]', newImage);
+    await page.fill('textarea[name="bio"]', newBio);
+    await page.fill('input[name="image"]', newImage);
 
     // Submit and wait for API response
     const responsePromise = page.waitForResponse(
@@ -138,7 +138,7 @@ test.describe('Settings - Profile Updates', () => {
     await page.goto('/settings');
 
     const newBio = `Visible bio ${Date.now()}`;
-    await page.fill('textarea[formControlName="bio"]', newBio);
+    await page.fill('textarea[name="bio"]', newBio);
 
     await Promise.all([
       page.waitForResponse(res => res.url().includes('/user') && res.request().method() === 'PUT'),
@@ -159,7 +159,7 @@ test.describe('Settings - Profile Updates', () => {
     await page.goto('/settings');
 
     const newImage = 'https://api.realworld.io/images/smiley-cyrus.jpeg';
-    await page.fill('input[formControlName="image"]', newImage);
+    await page.fill('input[name="image"]', newImage);
 
     await Promise.all([
       page.waitForResponse(res => res.url().includes('/user') && res.request().method() === 'PUT'),
@@ -183,7 +183,7 @@ test.describe('Settings - Profile Updates', () => {
     await page.goto('/settings');
 
     const newBio = `Navbar test ${Date.now()}`;
-    await page.fill('textarea[formControlName="bio"]', newBio);
+    await page.fill('textarea[name="bio"]', newBio);
 
     await Promise.all([
       page.waitForResponse(res => res.url().includes('/user') && res.request().method() === 'PUT'),
@@ -201,7 +201,7 @@ test.describe('Settings - Profile Updates', () => {
     await page.goto('/settings');
 
     const bio1 = `First update ${Date.now()}`;
-    await page.fill('textarea[formControlName="bio"]', bio1);
+    await page.fill('textarea[name="bio"]', bio1);
 
     await Promise.all([
       page.waitForResponse(res => res.url().includes('/user') && res.request().method() === 'PUT'),
@@ -212,14 +212,14 @@ test.describe('Settings - Profile Updates', () => {
 
     // Go back to settings
     await page.goto('/settings');
-    await expect(page.locator('input[formControlName="username"]')).toHaveValue(user.username);
+    await expect(page.locator('input[name="username"]')).toHaveValue(user.username);
 
     // Verify previous update persisted
-    await expect(page.locator('textarea[formControlName="bio"]')).toHaveValue(bio1);
+    await expect(page.locator('textarea[name="bio"]')).toHaveValue(bio1);
 
     // Make another update
     const bio2 = `Second update ${Date.now()}`;
-    await page.fill('textarea[formControlName="bio"]', bio2);
+    await page.fill('textarea[name="bio"]', bio2);
 
     await Promise.all([
       page.waitForResponse(res => res.url().includes('/user') && res.request().method() === 'PUT'),

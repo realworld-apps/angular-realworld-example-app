@@ -31,8 +31,8 @@ test.describe('Authentication', () => {
 
   test('should show error for invalid login', async ({ page }) => {
     await page.goto('/login');
-    await page.fill('input[formControlName="email"]', 'nonexistent@example.com');
-    await page.fill('input[formControlName="password"]', 'wrongpassword');
+    await page.fill('input[name="email"]', 'nonexistent@example.com');
+    await page.fill('input[name="password"]', 'wrongpassword');
     await page.click('button[type="submit"]');
     // Should show error message
     await expect(page.locator('.error-messages')).toBeVisible();
@@ -46,8 +46,8 @@ test.describe('Authentication', () => {
     await logout(page);
     // Try to login with correct email but wrong password
     await page.goto('/login');
-    await page.fill('input[formControlName="email"]', user.email);
-    await page.fill('input[formControlName="password"]', 'wrongpassword123');
+    await page.fill('input[name="email"]', user.email);
+    await page.fill('input[name="password"]', 'wrongpassword123');
     await page.click('button[type="submit"]');
     // Should show error message
     await expect(page.locator('.error-messages')).toBeVisible();

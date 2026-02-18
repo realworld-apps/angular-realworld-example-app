@@ -27,19 +27,19 @@ export async function updateProfile(
   await page.goto('/settings', { waitUntil: 'load' });
 
   if (updates.image) {
-    await page.fill('input[formControlName="image"]', updates.image);
+    await page.fill('input[name="image"]', updates.image);
   }
   if (updates.username) {
-    await page.fill('input[formControlName="username"]', updates.username);
+    await page.fill('input[name="username"]', updates.username);
   }
   if (updates.bio) {
-    await page.fill('textarea[formControlName="bio"]', updates.bio);
+    await page.fill('textarea[name="bio"]', updates.bio);
   }
   if (updates.email) {
-    await page.fill('input[formControlName="email"]', updates.email);
+    await page.fill('input[name="email"]', updates.email);
   }
   if (updates.password) {
-    await page.fill('input[formControlName="password"]', updates.password);
+    await page.fill('input[name="password"]', updates.password);
   }
 
   // Click submit and wait for API call to complete, then navigation

@@ -19,6 +19,7 @@
               @if (authType === 'register') {
                 <input
                   formControlName="username"
+                  name="username"
                   placeholder="Username"
                   class="form-control form-control-lg"
                   type="text"
@@ -26,11 +27,18 @@
               }
             </fieldset>
             <fieldset class="form-group">
-              <input formControlName="email" placeholder="Email" class="form-control form-control-lg" type="text" />
+              <input
+                formControlName="email"
+                name="email"
+                placeholder="Email"
+                class="form-control form-control-lg"
+                type="text"
+              />
             </fieldset>
             <fieldset class="form-group">
               <input
                 formControlName="password"
+                name="password"
                 placeholder="Password"
                 class="form-control form-control-lg"
                 type="password"

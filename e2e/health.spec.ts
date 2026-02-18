@@ -21,7 +21,7 @@ test.describe('Health Checks', () => {
 
     // Should see login form
     await expect(page.locator('h1')).toContainText('Sign in', { timeout: 10000 });
-    await expect(page.locator('input[formControlName="email"]')).toBeVisible();
+    await expect(page.locator('input[name="email"]')).toBeVisible();
   });
 
   test('can navigate to register page', async ({ page }) => {
@@ -29,6 +29,6 @@ test.describe('Health Checks', () => {
 
     // Should see register form
     await expect(page.locator('h1')).toContainText('Sign up', { timeout: 10000 });
-    await expect(page.locator('input[formControlName="username"]')).toBeVisible();
+    await expect(page.locator('input[name="username"]')).toBeVisible();
   });
 });

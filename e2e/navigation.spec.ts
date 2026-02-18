@@ -192,12 +192,10 @@ test.describe('Navigation and Filtering', () => {
     const user = generateUniqueUser();
     await register(page, user.username, user.email, user.password);
 
-    // Create articles
+    // Create articles (generate just-in-time so Date.now() is distinct)
     const article1 = generateUniqueArticle();
-    const article2 = generateUniqueArticle();
-
     await createArticle(page, article1);
-    await page.goto('/editor');
+    const article2 = generateUniqueArticle();
     await createArticle(page, article2);
 
     // Favorite article1 - go to global feed to see the article
