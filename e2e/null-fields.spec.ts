@@ -138,11 +138,10 @@ test.describe('Null/Empty Image and Bio Handling', () => {
     // The global feed contains articles from the backend's seed users
     await page.goto('/', { waitUntil: 'load' });
     await page.locator('a.nav-link', { hasText: 'Global Feed' }).click();
-    await page.waitForSelector('.article-preview', { timeout: 10000 });
-    // Collect author names and avatars from visible article previews
+    // Wait for at least 2 article previews to load (seed data from multiple authors)
     const previews = page.locator('.article-preview');
+    await expect(previews.nth(1)).toBeVisible({ timeout: 10000 });
     const count = await previews.count();
-    expect(count).toBeGreaterThanOrEqual(2);
     const authors = new Set<string>();
     for (let i = 0; i < count; i++) {
       const preview = previews.nth(i);

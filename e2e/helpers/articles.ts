@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 
 export interface ArticleData {
   title: string;
@@ -35,8 +35,9 @@ export async function createArticle(page: Page, article: ArticleData, options: {
 export async function editArticle(page: Page, slug: string, updates: Partial<ArticleData>) {
   await page.goto(`/editor/${slug}`, { waitUntil: 'load' });
 
-  // Wait for form to be populated before clearing/filling
-  await page.waitForSelector('input[name="title"]');
+  // Wait for the API data to populate the form (not just for the input to exist)
+  const titleInput = page.locator('input[name="title"]');
+  await expect(titleInput).not.toHaveValue('', { timeout: 10000 });
 
   if (updates.title) {
     await page.fill('input[name="title"]', '');
