@@ -1,6 +1,6 @@
 /*
  * ============================================================================
- * Conduit Minimal CSS v3
+ * Conduit Minimal CSS v4
  * Only includes classes actually used in this codebase
  * ============================================================================
  *
@@ -27,11 +27,11 @@
  */
 
 :root {
-  --brand: #5cb85c;
-  --brand-hover: #449d44;
-  --brand-active: #398439;
-  --brand-dark: #3d8b3d;
-  --brand-light: #a3d7a3;
+  --brand: #33aa44;
+  --brand-hover: #2b8e3a;
+  --brand-active: #237630;
+  --brand-dark: #237630;
+  --brand-light: #7dd88b;
 
   --danger: #b85c5c;
   --danger-light: #d7a3a3;
@@ -46,9 +46,12 @@
   --text-lighter: #aaa;
   --text-disabled: #818a91;
 
-  --border: #ddd;
+  --border: #eee;
   --bg-light: #f3f3f3;
-  --input-focus: #66afe9;
+  --input-focus: var(--brand);
+
+  --content-width: 720px;
+  --content-breakpoint: 1080px;
 }
 
 /* ============================================================================
@@ -104,13 +107,14 @@ hr {
   margin-top: 1rem;
   margin-bottom: 1rem;
   border: 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid #eee;
 }
 
 a {
   color: var(--brand);
   text-decoration: none;
   background-color: transparent;
+  transition: color 0.15s ease;
 }
 
 a:focus,
@@ -180,7 +184,21 @@ p {
 }
 
 .logo-font {
-  font-family: 'Titillium Web', sans-serif;
+  font-family: 'Lora', serif;
+}
+
+.navbar-logo {
+  height: 1.25rem;
+  vertical-align: middle;
+}
+
+.banner-logo {
+  height: 3rem;
+}
+
+.footer-logo {
+  height: 1rem;
+  display: block;
 }
 
 button,
@@ -387,8 +405,9 @@ fieldset {
   background-color: #fff;
   background-image: none;
   background-clip: padding-box;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 0.25rem;
+  border: 1px solid #eee;
+  border-radius: 0.5rem;
+  transition: border-color 0.15s ease;
 }
 
 .form-control:focus {
@@ -414,7 +433,7 @@ fieldset {
 .form-control-lg {
   padding: 0.75rem 1.5rem;
   font-size: 1.25rem;
-  border-radius: 0.3rem;
+  border-radius: 0.625rem;
 }
 
 .form-group {
@@ -437,7 +456,12 @@ fieldset {
   border: 1px solid transparent;
   padding: 0.5rem 1rem;
   font-size: 1rem;
-  border-radius: 0.25rem;
+  border-radius: 0.5rem;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .btn:focus,
@@ -487,21 +511,21 @@ fieldset[disabled] a.btn {
 .btn-primary:hover {
   color: #fff;
   background-color: var(--brand-hover);
-  border-color: #419641;
+  border-color: var(--brand-hover);
 }
 
 .btn-primary:focus,
 .btn-primary.focus {
   color: #fff;
   background-color: var(--brand-hover);
-  border-color: #419641;
+  border-color: var(--brand-hover);
 }
 
 .btn-primary:active,
 .btn-primary.active {
   color: #fff;
   background-color: var(--brand-hover);
-  border-color: #419641;
+  border-color: var(--brand-hover);
   background-image: none;
 }
 
@@ -513,7 +537,7 @@ fieldset[disabled] a.btn {
 .btn-primary.active.focus {
   color: #fff;
   background-color: var(--brand-active);
-  border-color: #2d672d;
+  border-color: var(--brand-active);
 }
 
 .btn-primary.disabled:focus,
@@ -696,13 +720,13 @@ fieldset[disabled] a.btn {
 .btn-lg {
   padding: 0.75rem 1.5rem;
   font-size: 1.25rem;
-  border-radius: 0.3rem;
+  border-radius: 0.625rem;
 }
 
 .btn-sm {
   padding: 0.25rem 0.5rem;
   font-size: 0.875rem;
-  border-radius: 0.2rem;
+  border-radius: 0.375rem;
 }
 
 /* ============================================================================
@@ -717,6 +741,9 @@ fieldset[disabled] a.btn {
 
 .nav-link {
   display: inline-block;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .nav-link:focus,
@@ -744,7 +771,7 @@ fieldset[disabled] a.btn {
 .nav-pills .nav-link {
   display: block;
   padding: 0.5em 1em;
-  border-radius: 0.25rem;
+  border-radius: 0.5rem;
 }
 
 .nav-pills .nav-link.active,
@@ -770,15 +797,15 @@ fieldset[disabled] a.btn {
   padding-top: 0;
   padding-bottom: 0.25rem;
   margin-right: 2rem;
-  font-family: 'Titillium Web', sans-serif;
+  font-family: 'Lora', serif;
   font-size: 1.5rem;
-  color: var(--brand);
+  color: #222;
 }
 
 .navbar-brand:focus,
 .navbar-brand:hover {
   text-decoration: none;
-  color: var(--brand);
+  color: #222;
 }
 
 .navbar-nav {
@@ -804,7 +831,7 @@ fieldset[disabled] a.btn {
 .navbar-light .navbar-brand,
 .navbar-light .navbar-brand:focus,
 .navbar-light .navbar-brand:hover {
-  color: var(--brand);
+  color: #222;
 }
 
 .navbar-light .navbar-nav .nav-link {
@@ -833,7 +860,27 @@ fieldset[disabled] a.btn {
 }
 
 .nav-link:hover {
-  transition: 0.1s all;
+  text-decoration: none;
+}
+
+.nav-signup {
+  color: #fff !important;
+  background: var(--brand);
+  border: 1px solid var(--brand);
+  border-radius: 99em;
+  padding: 5px 12px !important;
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  transition:
+    background 200ms ease,
+    border-color 200ms ease;
+}
+
+.nav-signup:hover,
+.nav-signup:focus {
+  color: #fff !important;
+  background: var(--brand-hover);
+  border-color: var(--brand-hover);
 }
 
 .nav-pills.outline-active .nav-link {
@@ -863,8 +910,12 @@ fieldset[disabled] a.btn {
   display: block;
   margin-bottom: 0.75rem;
   background-color: #fff;
-  border-radius: 0.25rem;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.125);
+  border-radius: 0.75rem;
+  border: 1px solid #eee;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.2s ease;
 }
 
 .card-block {
@@ -884,7 +935,7 @@ fieldset[disabled] a.btn {
 .card-footer {
   padding: 0.75rem 1.25rem;
   background-color: #f5f5f5;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.125);
+  border-top: 1px solid #eee;
 }
 
 .card-footer::after {
@@ -894,7 +945,7 @@ fieldset[disabled] a.btn {
 }
 
 .card-footer:last-child {
-  border-radius: 0 0 0.25rem 0.25rem;
+  border-radius: 0 0 0.75rem 0.75rem;
 }
 
 /* ============================================================================
@@ -906,7 +957,7 @@ fieldset[disabled] a.btn {
   padding-left: 0;
   margin-top: 1rem;
   margin-bottom: 1rem;
-  border-radius: 0.25rem;
+  border-radius: 0.5rem;
 }
 
 .page-item {
@@ -915,23 +966,23 @@ fieldset[disabled] a.btn {
 
 .page-item:first-child .page-link {
   margin-left: 0;
-  border-bottom-left-radius: 0.25rem;
-  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.5rem;
+  border-top-left-radius: 0.5rem;
 }
 
 .page-item:last-child .page-link {
-  border-bottom-right-radius: 0.25rem;
-  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
 }
 
 .page-item.active .page-link,
 .page-item.active .page-link:focus,
 .page-item.active .page-link:hover {
   z-index: 2;
-  color: #fff;
+  color: #222;
   cursor: default;
-  background-color: var(--brand);
-  border-color: var(--brand);
+  background-color: #eee;
+  border-color: #eee;
 }
 
 .page-item.disabled .page-link,
@@ -953,6 +1004,9 @@ fieldset[disabled] a.btn {
   text-decoration: none;
   background-color: #fff;
   border: 1px solid var(--border);
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .page-link:focus,
@@ -973,24 +1027,28 @@ fieldset[disabled] a.btn {
 }
 
 .tag-default {
-  background-color: var(--text-disabled);
-  color: #fff;
+  background-color: transparent;
+  color: #222;
+  border: 1px solid #eee;
+  border-radius: 100px;
   font-size: 0.8rem;
-  padding-top: 0.1rem;
-  padding-bottom: 0.1rem;
+  line-height: 1.1rem;
+  padding: 0.35rem 0.75rem;
   white-space: nowrap;
-  margin-right: 3px;
-  margin-bottom: 0.2rem;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
   display: inline-block;
+  transition: background 300ms ease;
 }
 
 .tag-default:hover {
   text-decoration: none;
+  background-color: #eee;
 }
 
 .tag-default[href]:focus,
 .tag-default[href]:hover {
-  background-color: #687077;
+  background-color: #eee;
 }
 
 .tag-default.tag-outline {
@@ -1024,18 +1082,22 @@ ul.tag-list li {
  * ============================================================================ */
 
 footer {
-  background: var(--bg-light);
+  background: #fff;
+  border-top: 1px solid #eee;
   margin-top: 42px;
   padding: 1rem 0;
   width: 100%;
 }
 
 footer .logo-font {
-  vertical-align: middle;
+  color: #222;
+}
+
+footer a {
+  color: #222;
 }
 
 footer .attribution {
-  vertical-align: middle;
   margin-left: 10px;
   font-size: 0.8rem;
   color: var(--text-light);
@@ -1059,14 +1121,15 @@ footer .attribution {
  * ============================================================================ */
 
 .banner {
-  color: #fff;
-  background: #333;
+  color: var(--text);
+  background: #fff;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
   padding: 2rem;
   margin-bottom: 2rem;
 }
 
 .banner h1 {
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   margin-bottom: 0;
 }
 
@@ -1100,8 +1163,14 @@ footer .attribution {
   border-radius: 30px;
 }
 
+.article-meta .btn + .btn,
+.article-meta app-follow-button + app-favorite-button,
+.article-meta app-favorite-button {
+  margin-left: 0.5rem;
+}
+
 .article-meta .info {
-  margin: 0 1.5rem 0 0.3rem;
+  margin: 0 1.5rem 0 0.5rem;
   display: inline-block;
   vertical-align: middle;
   line-height: 1rem;
@@ -1119,8 +1188,13 @@ footer .attribution {
 }
 
 .article-preview {
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid #eee;
   padding: 1.5rem 0;
+  transition: background-color 0.2s ease;
+}
+
+.article-preview:hover {
+  background-color: rgba(0, 0, 0, 0.01);
 }
 
 .article-preview .article-meta {
@@ -1171,23 +1245,20 @@ footer .attribution {
  * HOME PAGE
  * ============================================================================ */
 
-.home-page .banner {
-  background: var(--brand);
-  box-shadow:
-    inset 0 8px 8px -8px rgba(0, 0, 0, 0.3),
-    inset 0 -8px 8px -8px rgba(0, 0, 0, 0.3);
-}
-
 .home-page .banner p {
-  color: #fff;
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: 300;
+  color: var(--text-muted);
   margin-bottom: 0;
 }
 
+.home-page .banner p a {
+  color: var(--brand);
+  text-decoration: underline;
+}
+
 .home-page .banner h1 {
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   font-weight: 700;
   text-align: center;
   font-size: 3.5rem;
@@ -1200,9 +1271,10 @@ footer .attribution {
 }
 
 .home-page .sidebar {
-  padding: 5px 10px 10px 10px;
-  background: var(--bg-light);
-  border-radius: 4px;
+  margin-left: 10px;
+  padding-left: 20px;
+  background: none;
+  border-left: 1px solid #eee;
 }
 
 .home-page .sidebar p {
@@ -1220,6 +1292,7 @@ footer .attribution {
 .article-page .banner h1 {
   font-size: 2.8rem;
   font-weight: 600;
+  color: #222;
 }
 
 .article-page .banner .btn {
@@ -1236,11 +1309,43 @@ footer .attribution {
 }
 
 .article-page .banner .article-meta .author {
-  color: #fff;
+  color: var(--text);
+}
+
+.article-page .banner > .container,
+.article-page .article-content,
+.article-page .article-actions,
+.article-page .container.page > .row {
+  max-width: var(--content-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.article-page .article-content.row,
+.article-page .container.page > .row {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.article-page .article-content .col-md-12,
+.article-page .container.page > .row > [class*='col-'] {
+  padding-left: 0;
+  padding-right: 0;
+  flex: 0 0 100%;
+  max-width: 100%;
+  margin-left: 0;
+}
+
+footer > .container {
+  display: flex;
+  align-items: center;
+  max-width: var(--content-width);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .article-page .article-content p {
-  font-family: 'Source Serif Pro', serif;
+  font-family: 'Lora', serif;
   font-size: 1.2rem;
   line-height: 1.8rem;
   margin-bottom: 2rem;
@@ -1296,7 +1401,8 @@ footer .attribution {
 
 .article-page .article-actions {
   text-align: center;
-  margin: 1.5rem 0 3rem 0;
+  margin-top: 1.5rem;
+  margin-bottom: 3rem;
 }
 
 .article-page .article-actions .article-meta .info {
@@ -1323,13 +1429,12 @@ footer .attribution {
 }
 
 .article-page .card {
-  border: 1px solid #e5e5e5;
-  box-shadow: none;
+  border: 1px solid #eee;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .article-page .card .card-footer {
-  border-top: 1px solid #e5e5e5;
-  box-shadow: none;
+  border-top: 1px solid #eee;
   font-size: 0.8rem;
   font-weight: 300;
 }
@@ -1376,7 +1481,9 @@ footer .attribution {
 
 .profile-page .user-info {
   text-align: center;
-  background: var(--bg-light);
+  background: #fff;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
   padding: 2rem 0 1rem 0;
 }
 
