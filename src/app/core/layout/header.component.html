@@ -1,6 +1,6 @@
 <nav class="navbar navbar-light">
   <div class="container">
-    <a class="navbar-brand" routerLink="/">conduit</a>
+    <a class="navbar-brand" routerLink="/"><img src="assets/conduit-logo.svg" alt="Conduit" class="navbar-logo" /></a>
 
     @if (authState$ | async; as authState) {
       <!-- Show this for logged out users -->
@@ -15,7 +15,7 @@
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" routerLink="/register" routerLinkActive="active"> Sign up </a>
+            <a class="nav-link nav-signup" routerLink="/register" routerLinkActive="active"> Sign up </a>
           </li>
         </ul>
       }
