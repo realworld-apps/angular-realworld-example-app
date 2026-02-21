@@ -12,13 +12,20 @@ A global documentation for the project is available at [docs.realworld.show](htt
 
 # Getting started
 
-Make sure you have the [Angular CLI](https://github.com/angular/angular-cli#installation) installed globally. You can `bun install` to resolve all dependencies (should take a couple of seconds).
+Requires [Bun](https://bun.sh/docs/installation).
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+```bash
+git clone https://github.com/realworld-apps/angular-realworld-example-app.git
+cd angular-realworld-example-app
+bun run setup  # Init submodules + install dependencies
+bun run start
+```
+
+Run `bun run setup` again after a `git pull` that updates the `realworld` submodule.
 
 ### Building the project
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+Run `bun run build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
 ## Functionality overview
 

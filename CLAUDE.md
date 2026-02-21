@@ -3,6 +3,7 @@
 ## Commands
 
 ```bash
+bun run setup         # Init submodules + install deps (run after clone or after realworld submodule update)
 bun run start         # Dev server at localhost:4200
 bun run test          # Unit tests (Vitest)
 bun run test:e2e      # E2E tests (Playwright)

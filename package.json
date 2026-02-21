@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
+    "setup": "git submodule init && git submodule update && bun install",
     "start": "ng serve",
     "build": "ng build",
     "test": "vitest",
