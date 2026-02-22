@@ -17,8 +17,8 @@
     "test:e2e:debug": "playwright test --debug",
     "test:e2e:report": "playwright show-report",
     "test:e2e:disabled": "cat e2e/DISABLED_TESTS.md",
-    "format": "prettier --write \"**/*.{ts,html,css,json,md}\"",
-    "format:check": "prettier --check \"**/*.{ts,html,css,json,md}\"",
+    "format": "prettier --write \"**/*.{ts,html,css,json,md}\" \"!realworld/**\"",
+    "format:check": "prettier --check \"**/*.{ts,html,css,json,md}\" \"!realworld/**\"",
     "prepare": "husky install"
   },
   "engines": {
