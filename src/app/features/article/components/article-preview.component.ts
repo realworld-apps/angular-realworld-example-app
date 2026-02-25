@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, Input, signal } from '@angular/core
 import { Article } from '../models/article.model';
 import { ArticleMetaComponent } from './article-meta.component';
 import { RouterLink } from '@angular/router';
-
 import { FavoriteButtonComponent } from './favorite-button.component';
 
 @Component({
@@ -19,6 +18,11 @@ import { FavoriteButtonComponent } from './favorite-button.component';
         <h1>{{ article().title }}</h1>
         <p>{{ article().description }}</p>
         <span>Read more...</span>
+
+        <span class="comment-count" style="float: right; color: #bbb; font-size: 0.8rem;">
+          {{ article().commentsCount || 0 }} comments
+        </span>
+
         <ul class="tag-list">
           @for (tag of article().tagList; track tag) {
             <li class="tag-default tag-pill tag-outline">
@@ -32,6 +36,7 @@ import { FavoriteButtonComponent } from './favorite-button.component';
   imports: [ArticleMetaComponent, FavoriteButtonComponent, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+// MANDATORY: The 'export' keyword must be present here
 export class ArticlePreviewComponent {
   article = signal<Article>(null!);
 
