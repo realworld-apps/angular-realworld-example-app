@@ -10,14 +10,14 @@ import {
   signal,
   SimpleChanges,
 } from '@angular/core';
-import { ArticlesService } from '../services/articles.service';
+import { ArticlesService } from '../services/articles.service'; // Service for API interactions
 import { ArticleListConfig } from '../models/article-list-config.model';
-import { Article } from '../models/article.model';
+import { Article } from '../models/article.model'; // Interface defining article structure
 import { ArticlePreviewComponent } from './article-preview.component';
-import { NgClass } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { LoadingState } from '../../../core/models/loading-state.model';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NgClass } from '@angular/common'; // Directive for dynamic styling based on pagination state
+import { RouterLink } from '@angular/router'; // Directive for internal application links
+import { LoadingState } from '../../../core/models/loading-state.model'; // Enum for managing UI state transitions
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'; // Helper for clean Observable lifecycle management
 
 @Component({
   selector: 'app-article-list',
@@ -44,91 +44,97 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         <ul class="pagination">
           @for (pageNumber of totalPages(); track pageNumber) {
             <li class="page-item" [ngClass]="{ active: pageNumber === page() }">
-              <button class="page-link" (click)="setPageTo(pageNumber)">
-                {{ pageNumber }}
-              </button>
+              <button class="page-link" (click)="setPageTo(pageNumber)">{{ pageNumber }}</button>
             </li>
           }
         </ul>
       </nav>
     }
   `,
-  imports: [ArticlePreviewComponent, NgClass, RouterLink],
+  imports: [ArticlePreviewComponent, NgClass, RouterLink], // Standalone imports for component usage
   styles: `
     .page-link {
       cursor: pointer;
     }
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush, // Performance optimization for input-driven updates
 })
 export class ArticleListComponent implements OnChanges {
-  query!: ArticleListConfig;
-  results = signal<Article[]>([]);
-  page = signal(1);
-  totalPages = signal<number[]>([]);
-  loading = signal(LoadingState.NOT_LOADED);
-  LoadingState = LoadingState;
-  destroyRef = inject(DestroyRef);
+  query!: ArticleListConfig; // Internal state holding current query filters
+  results = signal<Article[]>([]); // Signal holding the array of articles to display
+  page = signal(1); // Signal tracking the local page state
+  totalPages = signal<number[]>([]); // Signal generating the range of page numbers
+  loading = signal(LoadingState.NOT_LOADED); // Signal driving the loading spinner logic
+  LoadingState = LoadingState; // Exporting enum for use in template logic
+  destroyRef = inject(DestroyRef); // Utility for automatic cleanup
 
-  @Input() limit!: number;
-  @Input() config!: ArticleListConfig;
-  @Input() currentPage = 1;
-  @Input() isFollowingFeed = false;
-  @Output() pageChange = new EventEmitter<number>();
+  @Input() limit!: number; // Maximum articles per page
+  @Input() config!: ArticleListConfig; // Global filter configuration
+  @Input() currentPage = 1; // Input to sync with home page pagination state
+  @Input() isFollowingFeed = false; // Flag to identify feed source for empty messages
+  @Input() sortBy: 'newest' | 'comments' | 'favorites' = 'newest'; // MADE CHANGES HERE: Input to receive sorting preference from parent
+  @Output() pageChange = new EventEmitter<number>(); // Event to notify parent of user navigation
 
   ngOnChanges(changes: SimpleChanges): void {
-    const configChange = changes['config'];
-    const pageChange = changes['currentPage'];
+    // Lifecycle hook to react to input changes
+    const configChange = changes['config']; // Detecting changes in filter settings
+    const pageChange = changes['currentPage']; // Detecting changes in page number
+    const sortChange = changes['sortBy']; // MADE CHANGES HERE: Detecting when sorting preference changes
 
     if (configChange?.currentValue) {
-      this.query = configChange.currentValue;
-      // Only reset page if currentPage wasn't also provided in this change
+      this.query = configChange.currentValue; // Updating internal query state
       if (!pageChange?.currentValue) {
-        this.page.set(1);
+        this.page.set(1); // Resetting page to 1 when filters change
       }
     }
 
     if (pageChange?.currentValue) {
-      this.page.set(pageChange.currentValue);
+      this.page.set(pageChange.currentValue); // Updating signal with new input value
     }
 
-    // Run query if we have a config and either config or page changed
-    if (this.query && (configChange || pageChange)) {
-      this.runQuery();
+    if (this.query && (configChange || pageChange || sortChange)) {
+      this.runQuery(); // Triggering data fetch if any relevant input changes
     }
   }
 
-  constructor(private articlesService: ArticlesService) {}
+  constructor(private articlesService: ArticlesService) {} // Injecting API service
 
   setPageTo(pageNumber: number) {
     if (pageNumber !== this.page()) {
-      this.page.set(pageNumber);
-      this.pageChange.emit(pageNumber);
-      this.runQuery();
+      this.page.set(pageNumber); // Updating internal page signal
+      this.pageChange.emit(pageNumber); // Emitting event to update URL in parent
+      this.runQuery(); // Fetching new page data
     }
   }
 
   runQuery() {
-    this.loading.set(LoadingState.LOADING);
-    this.results.set([]);
+    this.loading.set(LoadingState.LOADING); // Setting state to trigger loading UI
+    this.results.set([]); // Clearing existing results during fetch
 
-    // Create limit and offset filter (if necessary)
     if (this.limit) {
-      this.query.filters.limit = this.limit;
-      this.query.filters.offset = this.limit * (this.page() - 1);
+      this.query.filters.limit = this.limit; // Appending limit to filters
+      this.query.filters.offset = this.limit * (this.page() - 1); // Calculating pagination offset
     }
 
     this.articlesService
-      .query(this.query)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .query(this.query) // Calling backend service
+      .pipe(takeUntilDestroyed(this.destroyRef)) // Automated subscription management
       .subscribe(data => {
-        this.loading.set(LoadingState.LOADED);
-        this.results.set(data.articles);
+        this.loading.set(LoadingState.LOADED); // Updating state to show articles
 
-        // Used from http://www.jstips.co/en/create-range-0...n-easily-using-one-line/
+        // MADE CHANGES HERE: Client-side sorting logic
+        let sortedArticles = data.articles;
+        if (this.sortBy === 'comments') {
+          sortedArticles = [...data.articles].sort((a, b) => b.commentsCount - a.commentsCount); // Sorting descending by comment count
+        } else if (this.sortBy === 'favorites') {
+          sortedArticles = [...data.articles].sort((a, b) => b.favoritesCount - a.favoritesCount); // Sorting descending by favorites
+        }
+
+        this.results.set(sortedArticles); // Updating the results signal with sorted data
+
         this.totalPages.set(
           Array.from(new Array(Math.ceil(data.articlesCount / this.limit)), (val, index) => index + 1),
-        );
+        ); // Generating pagination range
       });
   }
 }

@@ -40,6 +40,19 @@
             <li class="nav-item" [hidden]="!listConfig().filters.tag">
               <a class="nav-link active"> <i class="ion-pound"></i> {{ listConfig().filters.tag }} </a>
             </li>
+
+            <li class="nav-item" style="float: right">
+              <select
+                class="nav-link"
+                (change)="onSortChange($event)"
+                [value]="sortBy()"
+                style="border: 1px solid #ccc; cursor: pointer"
+              >
+                <option value="newest">Newest</option>
+                <option value="comments">Most Commented</option>
+                <option value="favorites">Most Favorited</option>
+              </select>
+            </li>
           </ul>
         </div>
 
@@ -48,6 +61,7 @@
           [config]="listConfig()"
           [currentPage]="currentPage()"
           [isFollowingFeed]="isFollowingFeed()"
+          [sortBy]="sortBy()"
           (pageChange)="onPageChange($event)"
         />
       </div>
@@ -65,7 +79,6 @@
           </div>
 
           <div [hidden]="tagsLoaded()">Loading tags...</div>
-
           <div [hidden]="!tagsLoaded() || tags.length > 0">No tags are here... yet.</div>
         </div>
       </div>

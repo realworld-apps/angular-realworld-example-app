@@ -9,6 +9,16 @@
           <li class="nav-item">
             <a class="nav-link" routerLink="/"> Home </a>
           </li>
+          <li class="nav-item">
+            <button
+              class="btn btn-sm btn-outline-secondary"
+              (click)="toggleTheme()"
+              type="button"
+              style="margin-right: 1rem"
+            >
+              {{ (theme$ | async) === 'light' ? '🌙 Dark' : '☀️ Light' }}
+            </button>
+          </li>
 
           <li class="nav-item">
             <a class="nav-link" routerLink="/login" routerLinkActive="active"> Sign in </a>
