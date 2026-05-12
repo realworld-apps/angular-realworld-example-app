@@ -200,7 +200,7 @@ describe('ArticlesService', () => {
         tagList: ['new', 'test'],
       };
       const promise = firstValueFrom(service.create(newArticle));
-      const req = httpMock.expectOne('/articles/');
+      const req = httpMock.expectOne('/articles');
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({ article: newArticle });
       req.flush({ article: { ...mockArticle, ...newArticle } });
@@ -216,7 +216,7 @@ describe('ArticlesService', () => {
       };
       const errorResponse = { status: 422, statusText: 'Unprocessable Entity' };
       const promise = firstValueFrom(service.create(invalidArticle));
-      const req = httpMock.expectOne('/articles/');
+      const req = httpMock.expectOne('/articles');
       req.flush('Validation failed', errorResponse);
       await expect(promise).rejects.toMatchObject({ status: 422 });
     });

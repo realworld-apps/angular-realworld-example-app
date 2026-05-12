@@ -33,7 +33,7 @@ export class ArticlesService {
   }
 
   create(article: Partial<Article>): Observable<Article> {
-    return this.http.post<{ article: Article }>('/articles/', { article: article }).pipe(map(data => data.article));
+    return this.http.post<{ article: Article }>('/articles', { article: article }).pipe(map(data => data.article));
   }
 
   update(article: Partial<Article>): Observable<Article> {

@@ -626,7 +626,7 @@ test.describe('Error Handling - Network Errors', () => {
       });
     });
     // Network error on article creation
-    await page.route(`${API_BASE}/articles/`, route => {
+    await page.route(`${API_BASE}/articles`, route => {
       route.abort('internetdisconnected');
     });
     await page.goto('/');
