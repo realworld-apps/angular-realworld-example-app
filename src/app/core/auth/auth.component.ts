@@ -12,6 +12,8 @@ interface AuthForm {
   username?: FormControl<string>;
 }
 
+const STRONG_PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])\S{8,}$/;
+
 @Component({
   selector: 'app-auth-page',
   templateUrl: './auth.component.html',
@@ -46,6 +48,17 @@ export default class AuthComponent implements OnInit {
   ngOnInit(): void {
     this.authType = this.route.snapshot.url.at(-1)!.path;
     this.title = this.authType === 'login' ? 'Sign in' : 'Sign up';
+    const passwordControl = this.authForm.controls.password;
+    if (this.authType === 'register') {
+      passwordControl.setValidators([
+        Validators.required,
+        Validators.minLength(6),
+        Validators.pattern(STRONG_PASSWORD_PATTERN),
+      ]);
+    } else {
+      passwordControl.setValidators([Validators.required, Validators.minLength(6)]);
+    }
+    passwordControl.updateValueAndValidity({ emitEvent: false });
     if (this.authType === 'register') {
       this.authForm.addControl(
         'username',
@@ -58,6 +71,11 @@ export default class AuthComponent implements OnInit {
   }
 
   submitForm(): void {
+    if (this.authForm.invalid) {
+      this.authForm.markAllAsTouched();
+      return;
+    }
+
     this.isSubmitting.set(true);
     this.errors.set({ errors: {} });
 
