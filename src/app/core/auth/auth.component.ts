@@ -33,7 +33,7 @@ export default class AuthComponent implements OnInit {
   ) {
     this.authForm = new FormGroup<AuthForm>({
       email: new FormControl('', {
-        validators: [Validators.required, Validators.email],
+        validators: [Validators.required],
         nonNullable: true,
       }),
       password: new FormControl('', {
@@ -59,8 +59,10 @@ export default class AuthComponent implements OnInit {
 
   submitForm(): void {
     // Same check and message as the API ("email": ["is invalid"]), so a malformed address
-    // never leaves the browser. Blank fields are still reported by the API ("can't be blank").
-    if (this.authForm.controls.email.hasError('email')) {
+    // never leaves the browser. Checked here rather than as a control validator so the
+    // submit button stays enabled and the error is shown in the usual error list.
+    // Blank fields are still reported by the API ("can't be blank").
+    if (Validators.email(this.authForm.controls.email)) {
       this.errors.set({ errors: { email: 'is invalid' } });
       return;
     }
