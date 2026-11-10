@@ -42,13 +42,46 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       // Normalize error format: { errors: {...}, status: number }
-      // Provides fallback message for network errors (status 0) or missing body
+      // Provides a status-based fallback message when the body has no errors
       const body =
         err.error && typeof err.error === 'object' && 'errors' in err.error
           ? err.error
-          : { errors: { network: ['Unable to connect. Please check your internet connection.'] } };
+          : { errors: fallbackErrors(err.status) };
 
       return throwError(() => ({ ...body, status: err.status }));
     }),
   );
 };
+
+/**
+ * Builds a fallback error message based on the HTTP status,
+ * used when the server response doesn't include an `errors` object.
+ */
+function fallbackErrors(status: number): Record<string, string[]> {
+  switch (status) {
+    case 0:
+      return { Conexão: ['indisponível. Verifique sua conexão com a internet.'] };
+    case 400:
+      return { Requisição: ['inválida. Revise os dados e tente novamente.'] };
+    case 401:
+      return { Sessão: ['expirada. Faça login novamente.'] };
+    case 403:
+      return { Acesso: ['negado. Você não tem permissão para realizar esta ação.'] };
+    case 404:
+      return { Recurso: ['não encontrado.'] };
+    case 408:
+    case 504:
+      return { Tempo: ['de resposta esgotado. Tente novamente.'] };
+    case 409:
+      return { Conflito: ['o recurso já existe ou foi alterado.'] };
+    case 422:
+      return { Dados: ['não puderam ser processados. Verifique os campos e tente novamente.'] };
+    case 429:
+      return { Muitas: ['requisições em pouco tempo. Aguarde um momento e tente novamente.'] };
+    default:
+      if (status >= 500) {
+        return { Erro: ['no servidor. Tente novamente mais tarde.'] };
+      }
+      return { Erro: [`inesperado (status ${status}).`] };
+  }
+}

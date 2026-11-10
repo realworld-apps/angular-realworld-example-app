@@ -40,10 +40,6 @@ yarn-error.log
 /e2e/*.js
 /e2e/*.map
 
-# Playwright
-/playwright-report/
-/test-results/
-
 # System Files
 .DS_Store
 Thumbs.db
