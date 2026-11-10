@@ -147,6 +147,30 @@ describe('ArticlesService', () => {
       const req = httpMock.expectOne('/articles');
       req.flush({ articles: [], articlesCount: 0 });
     });
+
+    it('should skip undefined filter values', () => {
+      const config: ArticleListConfig = {
+        type: 'all',
+        filters: {
+          tag: 'angular',
+          author: undefined,
+          limit: 10,
+        },
+      };
+
+      service.query(config).subscribe();
+
+      const req = httpMock.expectOne(request => {
+        return (
+          request.url === '/articles' &&
+          request.params.get('tag') === 'angular' &&
+          request.params.get('author') === null &&
+          request.params.get('limit') === '10'
+        );
+      });
+
+      req.flush({ articles: mockArticleList, articlesCount: 2 });
+    });
   });
 
   describe('get', () => {
@@ -255,12 +279,18 @@ describe('ArticlesService', () => {
   describe('unfavorite', () => {
     it('should unfavorite an article', async () => {
       const slug = 'article-to-unfavorite';
+      const unfavoritedArticle = {
+        ...mockArticle,
+        favorited: false,
+        favoritesCount: 4,
+      };
       const promise = firstValueFrom(service.unfavorite(slug));
       const req = httpMock.expectOne(`/articles/${slug}/favorite`);
       expect(req.request.method).toBe('DELETE');
-      req.flush(null);
-      await promise;
-      expect(true).toBe(true);
+      req.flush({ article: unfavoritedArticle });
+      const article = await promise;
+      expect(article.favorited).toBe(false);
+      expect(article.favoritesCount).toBe(4);
     });
   });
 });
